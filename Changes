@@ -1,4 +1,21 @@
 
+0.1.13
+
+    - tested against neon 0.15.1
+
+0.1.12
+
+    - remove request_ prefix for HTTP::Webdav::Request methods
+    - all *destroy* methods are now called DESTROY, so they are
+      called automaticly when the Perl variables that holds the
+      object goes out of scope.
+    - DESTORY methods now clears up some internaly datastructures
+      to avoid memory leaks.   
+
+0.1.11
+
+    - compiles and works on Windows
+    - clenaup of Constants.pm, so everything is correctly defined
 
 0.1.10
 

@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: propfind.pl,v 1.8 2001/06/05 09:22:37 richter Exp $
+# $Id: propfind.pl,v 1.9 2001/06/06 19:51:36 richter Exp $
 #
 ############################################################################
 
@@ -56,7 +56,7 @@ sub callback
 
 $sess = HTTP::Webdav -> new ;
 
-$sess -> server ("localhost", 8765) ;
+$sess -> server ("www.gr.ecos.de", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
 print "--> propfind: all properties\n\n" ;

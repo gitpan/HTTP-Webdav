@@ -170,6 +170,28 @@ checkout the neon docs and include files for more informations.
 
 =head1 Methods of HTTP::Webdav
 
+=head2 int = $session -> DESTROY ()
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 $session -> add_hooks (hooks,free_cookie)
 
 Add in hooks.
@@ -372,28 +394,6 @@ ne_session *
 =item uri
 
 <string>
-
-
-
-
-=back
-
-
-=back
-
-=head2 int = $session -> destroy ()
-
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $session
-
-ne_session *
-
 
 
 
@@ -2068,6 +2068,29 @@ ne_session *
 
 =head1 Methods of HTTP::Webdav::Buffer
 
+=head2 $buffer -> DESTROY ()
+
+Destroys (deallocates) a buffer 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $buffer
+
+ne_buffer *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 $buffer -> altered ()
 
 
@@ -2129,29 +2152,6 @@ size_t
 =head2 $buffer -> clear ()
 
 Empties the contents of buf; makes the buffer zero-length. 
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $buffer
-
-ne_buffer *
-
-
-
-
-
-=back
-
-
-=back
-
-=head2 $buffer -> destroy ()
-
-Destroys (deallocates) a buffer 
 
 =over 4
 
@@ -2526,7 +2526,7 @@ void *
 
 =head1 Methods of HTTP::Webdav::MultiStatus
 
-=head2 $multstatus -> destroy ()
+=head2 $multstatus -> DESTROY ()
 
 
 =over 4
@@ -2751,6 +2751,29 @@ const ne_status *
 
 =head1 Methods of HTTP::Webdav::Propfind
 
+=head2 $propfind -> DESTROY ()
+
+Destroy a propfind handler after use. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $propfind
+
+ne_propfind_handler *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 int = $propfind -> allprop (result)
 
 Find all properties.
@@ -2812,29 +2835,6 @@ Retrieve the 'private' pointer for the current propset for the
 given handler, as returned by the ne_props_create_complex callback
 installed using 'ne_propfind_set_private'.  If this callback was
 not registered, this function will return NULL.  
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $propfind
-
-ne_propfind_handler *
-
-
-
-
-
-=back
-
-
-=back
-
-=head2 $propfind -> destroy ()
-
-Destroy a propfind handler after use. 
 
 =over 4
 
@@ -3318,6 +3318,29 @@ nspace => <string>, name => <string>, };
 
 =head1 Methods of HTTP::Webdav::Request
 
+=head2 $request -> DESTROY ()
+
+Destroy memory associated with request pointer 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 $request -> add_depth_header (depth)
 
 Adds a Depth: header to a request 
@@ -3594,6 +3617,48 @@ ne_request *
 
 =back
 
+=head2 int = $request -> dispatch ()
+
+ne_request_dispatch: Sends the given request, and reads the
+response. Response-Status information can be retrieve with
+ne_get_status(req).
+
+Returns:
+NE_OK         if request sent + response read okay.
+NE_AUTH       if user authentication failed on origin server
+NE_AUTHPROXY  if user authentication failed on proxy server
+NE_SERVERAUTH server authentication failed
+NE_PROXYAUTH  proxy authentication failed
+NE_CONNECT    could not connect to server/proxy server
+NE_TIMEOUT    connection timed out mid-request
+NE_ERROR      for other errors, and ne_get_error() should
+return a meaningful error string
+
+NB: NE_AUTH and NE_AUTHPROXY mean that the USER supplied the
+wrong username/password.  SERVER/PROXYAUTH mean that, after the
+server has accepted a valid username/password, the server/proxy did
+not authenticate the response message correctly.
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 int = $request -> end_request ()
 
 
@@ -3629,6 +3694,34 @@ ne_request *
 
 ne_request *
 
+
+
+
+
+=back
+
+
+=back
+
+=head2 void * = $request -> hook_private (id)
+
+Return private data for a new request  
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+=item id
+
+<string>
 
 
 
@@ -3723,99 +3816,6 @@ ne_request *
 
 size_t
 
-
-
-
-
-=back
-
-
-=back
-
-=head2 $request -> request_destroy ()
-
-Destroy memory associated with request pointer 
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $request
-
-ne_request *
-
-
-
-
-
-=back
-
-
-=back
-
-=head2 int = $request -> request_dispatch ()
-
-ne_request_dispatch: Sends the given request, and reads the
-response. Response-Status information can be retrieve with
-ne_get_status(req).
-
-Returns:
-NE_OK         if request sent + response read okay.
-NE_AUTH       if user authentication failed on origin server
-NE_AUTHPROXY  if user authentication failed on proxy server
-NE_SERVERAUTH server authentication failed
-NE_PROXYAUTH  proxy authentication failed
-NE_CONNECT    could not connect to server/proxy server
-NE_TIMEOUT    connection timed out mid-request
-NE_ERROR      for other errors, and ne_get_error() should
-return a meaningful error string
-
-NB: NE_AUTH and NE_AUTHPROXY mean that the USER supplied the
-wrong username/password.  SERVER/PROXYAUTH mean that, after the
-server has accepted a valid username/password, the server/proxy did
-not authenticate the response message correctly.
-
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $request
-
-ne_request *
-
-
-
-
-
-=back
-
-
-=back
-
-=head2 void * = $request -> request_hook_private (id)
-
-Return private data for a new request  
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $request
-
-ne_request *
-
-
-
-=item id
-
-<string>
 
 
 
@@ -3962,7 +3962,7 @@ size_t
 
 =head1 Methods of HTTP::Webdav::SSL
 
-=head2 $ssl -> destroy_ssl_context ()
+=head2 $ssl -> DESTROY ()
 
 
 =over 4
@@ -4042,55 +4042,6 @@ nssl_context *
 nssl_context *
 
 
-
-
-
-=back
-
-
-=back
-
-=head2 $ssl -> set_cert_accept (accepter)
-
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $ssl
-
-nssl_context *
-
-
-
-
-
-=item Callback function: accepter
-
-int = accepter (userdata,info)
-
-Returns:
-0 -> User accepts the certificate
-non-zero -> user does NOT accept the certificate.
-
-
-
-
-=over 4
-
-=item userdata
-
-void *
-
-=item info
-
-const nssl_certificate *
-
-
-
-=back
 
 
 
@@ -6035,9 +5986,10 @@ size_t
 
 =head1 Methods of HTTP::Webdav::XML
 
-=head2 int = $hip -> currentline ()
+=head2 $hip -> DESTROY ()
 
-Return current parse line for errors 
+Destroys the parser. Any operations on it then have 
+undefined results. 
 
 =over 4
 
@@ -6058,10 +6010,9 @@ ne_xml_parser *
 
 =back
 
-=head2 $hip -> destroy ()
+=head2 int = $hip -> currentline ()
 
-Destroys the parser. Any operations on it then have 
-undefined results. 
+Return current parse line for errors 
 
 =over 4
 

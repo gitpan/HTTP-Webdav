@@ -75,7 +75,6 @@ nssl_key_prompt T_CVREF2
 sock_block_reader T_CVREF2
 ne_notify_status T_CVREF2
 ne_207_end_response T_CVREF2
-nssl_accept T_CVREF2
 ne_block_reader T_CVREF2
 ne_accept_response T_CVREF2
 ne_xml_startelm_cb T_CVREF2
@@ -100,8 +99,7 @@ ne_session__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav\") ;
@@ -191,8 +189,7 @@ ne_lock_session__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::LockSession\") ;
@@ -204,8 +201,7 @@ ne_prop_result_set__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Propset\") ;
@@ -217,8 +213,7 @@ struct_ne_lock__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Lock\") ;
@@ -375,8 +370,7 @@ ne_____parser__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::MultiStatus\") ;
@@ -390,8 +384,7 @@ ne_buffer__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Buffer\") ;
@@ -403,8 +396,7 @@ ne_request__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Request\") ;
@@ -416,8 +408,7 @@ nssl_context__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::SSL\") ;
@@ -442,8 +433,7 @@ struct_ne_md__ctx__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
@@ -462,8 +452,7 @@ nsocket__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Socket\") ;
@@ -500,8 +489,7 @@ ne_xml_parser__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::XML\") ;
@@ -513,8 +501,7 @@ ne_propfind_handler__
 
         {
         SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
             croak (\"\$var is not of type HTTP::Webdav::Propfind\") ;
@@ -535,6 +522,7 @@ ne_session__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -600,6 +588,7 @@ ne_lock_session__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::LockSession\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -615,6 +604,7 @@ ne_prop_result_set__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propset\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -630,6 +620,7 @@ struct_ne_lock__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Lock\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -747,6 +738,7 @@ ne_____parser__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MultiStatus\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -764,6 +756,7 @@ ne_buffer__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Buffer\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -779,6 +772,7 @@ ne_request__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Request\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -794,6 +788,7 @@ nssl_context__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::SSL\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -809,6 +804,7 @@ struct_ne_md__ctx__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MD5\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -826,6 +822,7 @@ nsocket__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Socket\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -867,6 +864,7 @@ ne_xml_parser__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::XML\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
@@ -882,6 +880,7 @@ ne_propfind_handler__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propfind\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
