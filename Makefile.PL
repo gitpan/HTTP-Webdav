@@ -3,7 +3,7 @@
 #
 # (C) 2001 G.Richter / ECOS
 #
-# $Id: Makefile.PL,v 1.4 2001/06/01 10:36:07 richter Exp $
+# $Id: Makefile.PL,v 1.5 2001/06/04 19:44:59 richter Exp $
 #
  
 
@@ -16,7 +16,7 @@ sub error
     exit (1) ;
     }
 
-$pversion = 'neon 0.14.0' ;
+$pversion = 'neon 0.15.0' ;
 open (C, "neon-config --version|") or error ("Cannot execute neon-config ($!). Is neon already installed on your system?") ;
 chomp ($version = <C>)  or error ("Cannot execute neon-config to get version. Is neon already installed on your system?") ;
 close C ;

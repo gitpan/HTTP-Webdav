@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: proppatch.pl,v 1.6 2001/06/01 10:36:07 richter Exp $
+# $Id: proppatch.pl,v 1.7 2001/06/05 09:22:37 richter Exp $
 #
 ############################################################################
 
@@ -40,8 +40,8 @@ sub auth
 # set value of property 'test' to 'bar'
 
 @props = (
-    { name => {nspace => 'DAV:', name => 'test3'}, type => 1},
-    { name => {nspace => 'DAV:', name => 'test'}, value => 'bar'},
+    { name => {nspace => 'DAV:', name => 'test'}, type => 1},
+    { name => {nspace => 'DAV:', name => 'test2'}, value => 'bar'},
     ) ;
 
 $sess = HTTP::Webdav -> new ;
@@ -49,7 +49,7 @@ $sess = HTTP::Webdav -> new ;
 $sess -> server ("localhost", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
-$sess -> dav_proppatch ("/dav/foo.htm", \@props) ;
+$sess -> proppatch ("/dav/foo.htm", \@props) ;
 
 print "Status: ", $sess -> get_error , "\n" ;
 

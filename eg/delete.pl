@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: delete.pl,v 1.5 2001/06/01 10:36:07 richter Exp $
+# $Id: delete.pl,v 1.6 2001/06/05 09:22:37 richter Exp $
 #
 ############################################################################
 
@@ -39,7 +39,7 @@ $sess = HTTP::Webdav -> new ;
 $sess -> server ("localhost", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
-$sess -> dav_delete ("/dav/foo.htm") ;
+$sess -> delete ("/dav/bar.htm") ;
 
 print "Status: ", $sess -> get_error , "\n" ;
 

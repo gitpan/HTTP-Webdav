@@ -10,7 +10,7 @@ THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-$Id: README,v 1.6 2001/06/04 13:14:30 richter Exp $
+$Id: README,v 1.7 2001/06/05 09:22:36 richter Exp $
 
 
 This is the Perl interface to the neon HTTP and WebDAV client library.
@@ -63,8 +63,13 @@ See in the eg directory for some examples.
 
 Prerequisites
 
-Neon must be already installed on your computer. 
-This version requires neon 0.14.0
+Neon must be already installed on your computer and compiled as shared library.
+This can be done with the following commands in the neon source directory:
+
+./configure --enable-shared
+make install
+ 
+This version requires neon 0.15.0
 
 Neon can be taken form http://www.webdav.org/neon/
 

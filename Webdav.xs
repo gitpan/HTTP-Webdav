@@ -1,4 +1,4 @@
-/* $Id: Webdav.xs,v 1.11 2001/06/04 13:14:30 richter Exp $ */
+/* $Id: Webdav.xs,v 1.14 2001/06/05 12:20:02 richter Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,25 +17,25 @@ extern "C" {
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "http_request.h"
-#include "neon_i18n.h"
-#include "uri.h"
-#include "neon_md5.h"
+#include "ne_request.h"
+#include "ne_locks.h"
+#include "ne_dates.h"
+#include "ne_md5.h"
 #include "ne_alloc.h"
-#include "http_cookies.h"
-#include "http_utils.h"
-#include "string_utils.h"
-#include "nsocket.h"
-#include "dav_207.h"
-#include "neon_defs.h"
-#include "http_redirect.h"
-#include "http_basic.h"
-#include "dav_locks.h"
-#include "dav_basic.h"
-#include "dates.h"
-#include "http_auth.h"
-#include "hip_xml.h"
-#include "dav_props.h"
+#include "ne_auth.h"
+#include "ne_uri.h"
+#include "ne_xml.h"
+#include "ne_socket.h"
+#include "ne_string.h"
+#include "ne_redirect.h"
+#include "ne_i18n.h"
+#include "ne_props.h"
+#include "ne_session.h"
+#include "ne_defs.h"
+#include "ne_utils.h"
+#include "ne_207.h"
+#include "ne_cookies.h"
+#include "ne_basic.h"
 #ifdef __cplusplus
 }
 #endif
@@ -64,11 +64,11 @@ HV * pPerl2C ;
 
 
     
-    /* *** dav_207_end_propstat set by dav_207_set_propstat_handlers *** */
+    /* *** ne_207_end_propstat set by ne_207_set_propstat_handlers *** */
 
-void neon_cb___cb__19 (
+void neon_cb___cb__14 (
     void *userdata, void *propstat, const char *status_line, 
-    const http_status *status, const char *description)
+    const ne_status *status, const char *description)
     {
 
     int cnt ;
@@ -80,14 +80,13 @@ void neon_cb___cb__19 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__19", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__14", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
-		sv_setiv(pSV, (IV)propstat);
-	XPUSHs(pSV);
+	sv_setiv(pSV, (IV)propstat);	XPUSHs(pSV);
 	pSV = sv_newmortal ();
 		sv_setpv((SV*)pSV, status_line);
 	XPUSHs(pSV);
@@ -106,15 +105,15 @@ void neon_cb___cb__19 (
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)status->major_version);
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)status->minor_version);
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"code"), (IV)status->code);
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((const ne_status *)status)->code);
 	;
-	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)status->klass);
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((const ne_status *)status)->klass);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), status->reason_phrase);
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
         }
@@ -133,11 +132,203 @@ void neon_cb___cb__19 (
     }
 
     
-    /* *** dav_207_end_response set by dav_207_set_response_handlers *** */
+    /* *** ne_207_end_response set by ne_207_set_response_handlers *** */
+
+void neon_cb___cb__15 (
+    void *userdata, void *response, const char *status_line,
+    const ne_status *status, const char *description)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__15", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)response);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, status_line);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
+            {
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
+            }
+        else if (!SvROK (pSV))
+            {
+            croak ("status must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((const ne_status *)status)->code);
+	;
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((const ne_status *)status)->klass);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
+	;
+
+        }
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, description);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_accept_response set by ne_add_response_body_reader *** */
+
+int neon_cb___cb__19 (
+    void *userdata, ne_request *req, ne_status *st)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__19", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&req), sizeof(req), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Request", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)req), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
+            {
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
+            }
+        else if (!SvROK (pSV))
+            {
+            croak ("st must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((ne_status *)st)->major_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((ne_status *)st)->minor_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((ne_status *)st)->code);
+	;
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((ne_status *)st)->klass);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((ne_status *)st)->reason_phrase);
+	;
+
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_block_reader set by ne_read_file *** */
+
+void neon_cb___cb__5 (
+    void *userdata, const char *buf, size_t len)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__5", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, buf);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setiv(pSV, (IV)len);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_block_reader set by ne_add_response_body_reader *** */
 
 void neon_cb___cb__20 (
-    void *userdata, void *response, const char *status_line,
-    const http_status *status, const char *description)
+    void *userdata, const char *buf, size_t len)
     {
 
     int cnt ;
@@ -155,41 +346,10 @@ void neon_cb___cb__20 (
 	pSV = (SV *)userdata;
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
-		sv_setiv(pSV, (IV)response);
+		sv_setpv((SV*)pSV, buf);
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, status_line);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        HV * _pHV_ ;
-        if (!SvOK(pSV))
-            {
-            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
-            sv_2mortal (pSV) ;
-            }
-        else if (!SvROK (pSV))
-            {
-            croak ("status must be a reference") ;
-            }
-        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
-	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)status->major_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)status->minor_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,"code"), (IV)status->code);
-	;
-	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)status->klass);
-	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), status->reason_phrase);
-	;
-
-        }
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, description);
+		sv_setiv(pSV, (IV)len);
 	XPUSHs(pSV);
 
     PUTBACK ;
@@ -202,10 +362,9 @@ void neon_cb___cb__20 (
     }
 
     
-    /* *** dav_lock_result set by dav_lock_discover *** */
+    /* *** ne_free_hooks set by ne_add_hooks *** */
 
-void neon_cb___cb__2 (void *userdata, const struct dav_lock *lock, 
-				const char *uri, const http_status *status)
+void neon_cb___cb__1 (void *cookie)
     {
 
     int cnt ;
@@ -217,7 +376,104 @@ void neon_cb___cb__2 (void *userdata, const struct dav_lock *lock,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__2", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)cookie), "__cb__1", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)cookie;
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_header_handler set by ne_add_response_header_catcher *** */
+
+void neon_cb___cb__21 (void *userdata, const char *value)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__21", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, value);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_header_handler set by ne_add_response_header_handler *** */
+
+void neon_cb___cb__22 (void *userdata, const char *value)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__22", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, value);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_lock_result set by ne_lock_discover *** */
+
+void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock, 
+			       const char *uri, const ne_status *status)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__3", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -255,15 +511,15 @@ void neon_cb___cb__2 (void *userdata, const struct dav_lock *lock,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)status->major_version);
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)status->minor_version);
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"code"), (IV)status->code);
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((const ne_status *)status)->code);
 	;
-	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)status->klass);
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((const ne_status *)status)->klass);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), status->reason_phrase);
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
         }
@@ -279,9 +535,9 @@ void neon_cb___cb__2 (void *userdata, const struct dav_lock *lock,
     }
 
     
-    /* *** dav_lock_walkfunc set by dav_lock_iterate *** */
+    /* *** ne_lock_walkfunc set by ne_lock_iterate *** */
 
-void neon_cb___cb__18 (struct dav_lock *lock, void *userdata)
+void neon_cb___cb__13 (struct ne_lock *lock, void *userdata)
     {
 
     int cnt ;
@@ -293,7 +549,7 @@ void neon_cb___cb__18 (struct dav_lock *lock, void *userdata)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__18", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__13", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = sv_newmortal ();
@@ -324,10 +580,11 @@ void neon_cb___cb__18 (struct dav_lock *lock, void *userdata)
     }
 
     
-    /* *** dav_props_result set by dav_propnames *** */
+    /* *** ne_notify_status set by ne_set_status *** */
 
-void neon_cb___cb__3 (void *userdata, const char *href,
-				 const dav_prop_result_set *results)
+void neon_cb___cb__11 (void *userdata, 
+				 ne_conn_status status,
+				 const char *info)
     {
 
     int cnt ;
@@ -339,28 +596,15 @@ void neon_cb___cb__3 (void *userdata, const char *href,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__3", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__11", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, href);
-	XPUSHs(pSV);
+		XPUSHs(pSV);
 	pSV = sv_newmortal ();
-	
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
-            }
-        pSV = *ppArg ;
-        }
+		sv_setpv((SV*)pSV, info);
 	XPUSHs(pSV);
 
     PUTBACK ;
@@ -373,108 +617,10 @@ void neon_cb___cb__3 (void *userdata, const char *href,
     }
 
     
-    /* *** dav_props_result set by dav_propfind_allprop *** */
-
-void neon_cb___cb__21 (void *userdata, const char *href,
-				 const dav_prop_result_set *results)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__21", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, href);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
-            }
-        pSV = *ppArg ;
-        }
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** dav_props_result set by dav_propfind_named *** */
-
-void neon_cb___cb__22 (void *userdata, const char *href,
-				 const dav_prop_result_set *results)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__22", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, href);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
-            }
-        pSV = *ppArg ;
-        }
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** dav_props_result set by dav_simple_propfind *** */
+    /* *** ne_props_result set by ne_propnames *** */
 
 void neon_cb___cb__4 (void *userdata, const char *href,
-				 const dav_prop_result_set *results)
+				 const ne_prop_result_set *results)
     {
 
     int cnt ;
@@ -520,12 +666,159 @@ void neon_cb___cb__4 (void *userdata, const char *href,
     }
 
     
-    /* *** dav_propset_iterator set by dav_propset_iterate *** */
+    /* *** ne_props_result set by ne_simple_propfind *** */
 
-int neon_cb___cb__23 (void *userdata,
-				    const dav_propname *pname,
+void neon_cb___cb__12 (void *userdata, const char *href,
+				 const ne_prop_result_set *results)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__12", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, href);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_props_result set by ne_propfind_allprop *** */
+
+void neon_cb___cb__16 (void *userdata, const char *href,
+				 const ne_prop_result_set *results)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__16", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, href);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_props_result set by ne_propfind_named *** */
+
+void neon_cb___cb__17 (void *userdata, const char *href,
+				 const ne_prop_result_set *results)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__17", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, href);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_propset_iterator set by ne_propset_iterate *** */
+
+int neon_cb___cb__18 (void *userdata,
+				    const ne_propname *pname,
 				    const char *value,
-				    const http_status *status)
+				    const ne_status *status)
     {
 	int retval ;
 
@@ -538,7 +831,7 @@ int neon_cb___cb__23 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__23", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__18", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -560,9 +853,9 @@ int neon_cb___cb__23 (void *userdata,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_,"nspace"), pname->nspace);
+	sv_setpv((SV*)__fetchmember(_pHV_,"nspace"), ((const ne_propname *)pname)->nspace);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"name"), pname->name);
+	sv_setpv((SV*)__fetchmember(_pHV_,"name"), ((const ne_propname *)pname)->name);
 	;
 
         }
@@ -585,336 +878,15 @@ int neon_cb___cb__23 (void *userdata,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)status->major_version);
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)status->minor_version);
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,"code"), (IV)status->code);
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((const ne_status *)status)->code);
 	;
-	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)status->klass);
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((const ne_status *)status)->klass);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), status->reason_phrase);
-	;
-
-        }
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
-		}
-
-    SPAGAIN ;
-    if (cnt != 1)
-        {
-        retval = 0 ;
-        }
-    else
-        {
-        pSV = POPs ;
-	retval = (int)SvIV(pSV);
-	}
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** hip_xml_cdata_cb set by hip_xml_push_mixed_handler *** */
-
-void neon_cb___cb__16 (void *userdata, const struct hip_xml_elm *s, 
-     const char *cdata, int len)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__16", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, cdata);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setiv(pSV, (IV)len);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** hip_xml_endelm_cb set by hip_xml_push_handler *** */
-
-int neon_cb___cb__14 (void *userdata, const struct hip_xml_elm *s, const char *cdata)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__14", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, cdata);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
-		}
-
-    SPAGAIN ;
-    if (cnt != 1)
-        {
-        retval = 0 ;
-        }
-    else
-        {
-        pSV = POPs ;
-	retval = (int)SvIV(pSV);
-	}
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** hip_xml_endelm_cb set by hip_xml_push_mixed_handler *** */
-
-int neon_cb___cb__17 (void *userdata, const struct hip_xml_elm *s, const char *cdata)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__17", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, cdata);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
-		}
-
-    SPAGAIN ;
-    if (cnt != 1)
-        {
-        retval = 0 ;
-        }
-    else
-        {
-        pSV = POPs ;
-	retval = (int)SvIV(pSV);
-	}
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** hip_xml_startelm_cb set by hip_xml_push_handler *** */
-
-int neon_cb___cb__13 (void *userdata, const struct hip_xml_elm *elm, const char **atts)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__13", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	sv_setiv(pSV, (IV)elm);	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
-		}
-
-    SPAGAIN ;
-    if (cnt != 1)
-        {
-        retval = 0 ;
-        }
-    else
-        {
-        pSV = POPs ;
-	retval = (int)SvIV(pSV);
-	}
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** hip_xml_startelm_cb set by hip_xml_push_mixed_handler *** */
-
-int neon_cb___cb__15 (void *userdata, const struct hip_xml_elm *elm, const char **atts)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__15", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	sv_setiv(pSV, (IV)elm);	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
-		}
-
-    SPAGAIN ;
-    if (cnt != 1)
-        {
-        retval = 0 ;
-        }
-    else
-        {
-        pSV = POPs ;
-	retval = (int)SvIV(pSV);
-	}
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** http_accept_response set by http_add_response_body_reader *** */
-
-int neon_cb___cb__24 (
-    void *userdata, http_req *req, http_status *st)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__24", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&req), sizeof(req), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Request", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)req), 0) ;
-            }
-        pSV = *ppArg ;
-        }
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        HV * _pHV_ ;
-        if (!SvOK(pSV))
-            {
-            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
-            sv_2mortal (pSV) ;
-            }
-        else if (!SvROK (pSV))
-            {
-            croak ("st must be a reference") ;
-            }
-        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
-	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)st->major_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)st->minor_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,"code"), (IV)st->code);
-	;
-	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)st->klass);
-	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), st->reason_phrase);
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
         }
@@ -943,11 +915,12 @@ int neon_cb___cb__24 (
     }
 
     
-    /* *** http_block_reader set by http_read_file *** */
+    /* *** ne_provide_body set by ne_set_request_body_provider *** */
 
-void neon_cb___cb__6 (
-    void *userdata, const char *buf, size_t len)
+ssize_t neon_cb___cb__23 (void *userdata, 
+				   char *buffer, size_t buflen)
     {
+	ssize_t retval ;
 
     int cnt ;
     SV * pSV ;
@@ -958,215 +931,7 @@ void neon_cb___cb__6 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__6", 7, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, buf);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setiv(pSV, (IV)len);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_block_reader set by http_add_response_body_reader *** */
-
-void neon_cb___cb__25 (
-    void *userdata, const char *buf, size_t len)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__25", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, buf);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setiv(pSV, (IV)len);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_free_hooks set by http_add_hooks *** */
-
-void neon_cb___cb__1 (void *cookie)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)cookie), "__cb__1", 7, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)cookie;
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_header_handler set by http_add_response_header_catcher *** */
-
-void neon_cb___cb__26 (void *userdata, const char *value)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__26", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, value);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_header_handler set by http_add_response_header_handler *** */
-
-void neon_cb___cb__27 (void *userdata, const char *value)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, value);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_notify_status set by http_set_status *** */
-
-void neon_cb___cb__12 (void *userdata, 
-				   http_conn_status status,
-				   const char *info)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__12", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, info);
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** http_provide_body set by http_set_request_body_provider *** */
-
-size_t neon_cb___cb__28 (void *userdata, 
-				    char *buffer, size_t buflen)
-    {
-	size_t retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__23", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1190,7 +955,7 @@ size_t neon_cb___cb__28 (void *userdata,
     else
         {
         pSV = POPs ;
-	retval = (size_t)SvIV(pSV);
+	retval = (ssize_t)SvIV(pSV);
 	}
 	PUTBACK ;
 
@@ -1201,10 +966,10 @@ size_t neon_cb___cb__28 (void *userdata,
     }
 
     
-    /* *** http_redirect_confirm set by http_redirect_register *** */
+    /* *** ne_redirect_confirm set by ne_redirect_register *** */
 
-int neon_cb___cb__7 (void *userdata,
-				     const char *src, const char *dest)
+int neon_cb___cb__6 (void *userdata,
+				   const char *src, const char *dest)
     {
 	int retval ;
 
@@ -1217,7 +982,7 @@ int neon_cb___cb__7 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__7", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__6", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1252,10 +1017,10 @@ int neon_cb___cb__7 (void *userdata,
     }
 
     
-    /* *** http_redirect_notify set by http_redirect_register *** */
+    /* *** ne_redirect_notify set by ne_redirect_register *** */
 
-void neon_cb___cb__8 (void *userdata,
-				     const char *src, const char *dest)
+void neon_cb___cb__7 (void *userdata,
+				   const char *src, const char *dest)
     {
 
     int cnt ;
@@ -1267,7 +1032,7 @@ void neon_cb___cb__8 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__8", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__7", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1289,7 +1054,68 @@ void neon_cb___cb__8 (void *userdata,
     }
 
     
-    /* *** http_request_auth set by http_set_proxy_auth *** */
+    /* *** ne_request_auth set by ne_set_proxy_auth *** */
+
+int neon_cb___cb__9 (
+    void *userdata, const char *realm,
+    char **username, char **password)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__9", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, realm);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_ARRAY) ;
+		}
+	SPAGAIN ; 
+	
+    if (cnt < 2)
+        retval = -1 ;
+    else
+        {
+        SV * pPassword = POPs ;
+        SV * pUsername = POPs ;
+        char * s ;
+        STRLEN l ;
+        s = SvPV (pUsername, l) ;
+        *username = malloc (l + 1) ;
+        strcpy (*username, s) ;
+        s = SvPV (pPassword, l) ;
+        *password = malloc (l + 1) ;
+        strcpy (*password, s) ;
+        retval = 0 ;
+        }
+ ;
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_request_auth set by ne_set_server_auth *** */
 
 int neon_cb___cb__10 (
     void *userdata, const char *realm,
@@ -1350,11 +1176,10 @@ int neon_cb___cb__10 (
     }
 
     
-    /* *** http_request_auth set by http_set_server_auth *** */
+    /* *** ne_use_proxy set by ne_session_decide_proxy *** */
 
-int neon_cb___cb__11 (
-    void *userdata, const char *realm,
-    char **username, char **password)
+int neon_cb___cb__2 (void *userdata,
+			    const char *scheme, const char *hostname)
     {
 	int retval ;
 
@@ -1367,67 +1192,7 @@ int neon_cb___cb__11 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__11", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, realm);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_ARRAY) ;
-		}
-	SPAGAIN ; 
-	
-    if (cnt < 2)
-        retval = -1 ;
-    else
-        {
-        SV * pPassword = POPs ;
-        SV * pUsername = POPs ;
-        char * s ;
-        STRLEN l ;
-        s = SvPV (pUsername, l) ;
-        *username = malloc (l + 1) ;
-        strcpy (*username, s) ;
-        s = SvPV (pPassword, l) ;
-        *password = malloc (l + 1) ;
-        strcpy (*password, s) ;
-        retval = 0 ;
-        }
- ;
-	PUTBACK ;
-
-    FREETMPS ;
-    LEAVE ;
-	return retval ;
-
-    }
-
-    
-    /* *** http_use_proxy set by http_session_decide_proxy *** */
-
-int neon_cb___cb__5 (void *userdata,
-			      const char *scheme, const char *hostname)
-    {
-	int retval ;
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__5", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__2", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1462,9 +1227,48 @@ int neon_cb___cb__5 (void *userdata,
     }
 
     
-    /* *** nssl_accept set by sock_set_cert_accept *** */
+    /* *** ne_xml_cdata_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__29 (void *userdata, const nssl_certificate *info)
+void neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *s, 
+     const char *cdata, int len)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, cdata);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setiv(pSV, (IV)len);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_xml_endelm_cb set by ne_xml_push_handler *** */
+
+int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
     {
 	int retval ;
 
@@ -1478,6 +1282,200 @@ int neon_cb___cb__29 (void *userdata, const nssl_certificate *info)
     PUSHMARK(SP) ;
 
     ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__29", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, cdata);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_xml_endelm_cb set by ne_xml_push_mixed_handler *** */
+
+int neon_cb___cb__32 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__32", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)s);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, cdata);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_xml_startelm_cb set by ne_xml_push_handler *** */
+
+int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)elm);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_xml_startelm_cb set by ne_xml_push_mixed_handler *** */
+
+int neon_cb___cb__30 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	sv_setiv(pSV, (IV)elm);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** nssl_accept set by sock_set_cert_accept *** */
+
+int neon_cb___cb__24 (void *userdata, const nssl_certificate *info)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__24", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1497,15 +1495,15 @@ int neon_cb___cb__29 (void *userdata, const nssl_certificate *info)
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_,"owner"), info->owner);
+	sv_setpv((SV*)__fetchmember(_pHV_,"owner"), ((const nssl_certificate *)info)->owner);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"issuer"), info->issuer);
+	sv_setpv((SV*)__fetchmember(_pHV_,"issuer"), ((const nssl_certificate *)info)->issuer);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"valid_from"), info->valid_from);
+	sv_setpv((SV*)__fetchmember(_pHV_,"valid_from"), ((const nssl_certificate *)info)->valid_from);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"valid_till"), info->valid_till);
+	sv_setpv((SV*)__fetchmember(_pHV_,"valid_till"), ((const nssl_certificate *)info)->valid_till);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,"fingerprint"), info->fingerprint);
+	sv_setpv((SV*)__fetchmember(_pHV_,"fingerprint"), ((const nssl_certificate *)info)->fingerprint);
 	;
 
         }
@@ -1536,7 +1534,7 @@ int neon_cb___cb__29 (void *userdata, const nssl_certificate *info)
     
     /* *** nssl_key_prompt set by sock_set_key_prompt *** */
 
-int neon_cb___cb__30 (void *userdata, const char *filename,
+int neon_cb___cb__25 (void *userdata, const char *filename,
 			       char *buf, int buflen)
     {
 	int retval ;
@@ -1550,7 +1548,7 @@ int neon_cb___cb__30 (void *userdata, const char *filename,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__25", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1590,7 +1588,7 @@ int neon_cb___cb__30 (void *userdata, const char *filename,
     
     /* *** sock_block_reader set by sock_readfile_blocked *** */
 
-void neon_cb___cb__31 (
+void neon_cb___cb__26 (
     void *userdata, const char *buf, size_t len)
     {
 
@@ -1603,7 +1601,7 @@ void neon_cb___cb__31 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__26", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1625,9 +1623,9 @@ void neon_cb___cb__31 (
     }
 
     
-    /* *** sock_progress set by http_set_progress *** */
+    /* *** sock_progress set by ne_set_progress *** */
 
-void neon_cb___cb__9 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1639,7 +1637,7 @@ void neon_cb___cb__9 (void *userdata, off_t progress, off_t total)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__9", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__8", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1663,7 +1661,7 @@ void neon_cb___cb__9 (void *userdata, off_t progress, off_t total)
     
     /* *** sock_progress set by sock_register_progress *** */
 
-void neon_cb___cb__32 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__27 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1675,7 +1673,7 @@ void neon_cb___cb__32 (void *userdata, off_t progress, off_t total)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__32", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1703,8 +1701,8 @@ MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav
 
 void
 add_hooks(sess,hooks,free_cookie)
-	http_session * sess
-	const http_request_hooks * hooks
+	ne_session * sess
+	ne_request_hooks * hooks
 	CV * free_cookie
 
         PREINIT:
@@ -1717,33 +1715,159 @@ add_hooks(sess,hooks,free_cookie)
                 SvREFCNT_inc ((SV *)free_cookie) ;
                 hv_store (pObjHV, "__cb__1", 7, (SV *)free_cookie, 0) ; 
                 }
-	http_add_hooks(sess,hooks,pObject,free_cookie?&neon_cb___cb__1:NULL);
+	ne_add_hooks(sess,hooks,pObject,free_cookie?&neon_cb___cb__1:NULL);
 
 
 int
-dav_copy(sess,overwrite,src,dest)
-	http_session * sess
+close_connection(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_close_connection(sess);
+OUTPUT:
+	RETVAL
+
+
+int
+copy(sess,overwrite,src,dest)
+	ne_session * sess
 	int overwrite
-	const char * src
-	const char * dest
+	char * src
+	char * dest
+CODE:
+	RETVAL = 	ne_copy(sess,overwrite,src,dest);
+OUTPUT:
+	RETVAL
+
+
+void
+decide_proxy(sess,use_proxy)
+	ne_session * sess
+	CV * use_proxy
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (use_proxy)
+                {
+                SvREFCNT_inc ((SV *)use_proxy) ;
+                hv_store (pObjHV, "__cb__2", 7, (SV *)use_proxy, 0) ; 
+                }
+	ne_session_decide_proxy(sess,use_proxy?&neon_cb___cb__2:NULL,pObject);
 
 
 int
-dav_delete(sess,uri)
-	http_session * sess
-	const char * uri
+delete(sess,uri)
+	ne_session * sess
+	char * uri
+CODE:
+	RETVAL = 	ne_delete(sess,uri);
+OUTPUT:
+	RETVAL
 
 
 int
-dav_lock(sess,lock)
-	http_session * sess
-	struct dav_lock * lock
+destroy(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_session_destroy(sess);
+OUTPUT:
+	RETVAL
+
+
+void
+forget_auth(sess)
+	ne_session * sess
+CODE:
+	ne_forget_auth(sess);
 
 
 int
-dav_lock_discover(sess,uri,result)
-	http_session * sess
-	const char * uri
+get(sess,uri,fd)
+	ne_session * sess
+	char * uri
+	int fd
+CODE:
+	RETVAL = 	ne_get(sess,uri,fd);
+OUTPUT:
+	RETVAL
+
+
+const char *
+get_error(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_get_error(sess);
+OUTPUT:
+	RETVAL
+
+
+int
+get_range(sess,uri,range,fd)
+	ne_session * sess
+	char * uri
+	ne_content_range * range
+	int fd
+CODE:
+	RETVAL = 	ne_get_range(sess,uri,range,fd);
+OUTPUT:
+	RETVAL
+
+
+const char *
+get_scheme(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_get_scheme(sess);
+OUTPUT:
+	RETVAL
+
+
+const char *
+get_server_hostport(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_get_server_hostport(sess);
+OUTPUT:
+	RETVAL
+
+
+int
+getmodtime(sess,uri,modtime)
+	ne_session * sess
+	char * uri
+	time_t * modtime
+CODE:
+	RETVAL = 	ne_getmodtime(sess,uri,modtime);
+OUTPUT:
+	RETVAL
+
+
+void *
+hook_private(sess,id)
+	ne_session * sess
+	char * id
+CODE:
+	RETVAL = 	ne_session_hook_private(sess,id);
+OUTPUT:
+	RETVAL
+
+
+int
+lock(sess,lock)
+	ne_session * sess
+	struct ne_lock * lock
+CODE:
+	RETVAL = 	ne_lock(sess,lock);
+OUTPUT:
+	RETVAL
+
+
+int
+lock_discover(sess,uri,result)
+	ne_session * sess
+	char * uri
 	CV * result
 
         PREINIT:
@@ -1754,74 +1878,83 @@ dav_lock_discover(sess,uri,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__2", 7, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__3", 7, (SV *)result, 0) ; 
                 }
-	RETVAL = 	dav_lock_discover(sess,uri,result?&neon_cb___cb__2:NULL,pObject);
+	RETVAL = 	ne_lock_discover(sess,uri,result?&neon_cb___cb__3:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
-dav_lock_session *
-dav_lock_register(sess)
-	http_session * sess
+ne_lock_session *
+lock_register(sess)
+	ne_session * sess
+CODE:
+	RETVAL = 	ne_lock_register(sess);
+OUTPUT:
+	RETVAL
 
 
 int
-dav_mkcol(sess,uri)
-	http_session * sess
-	const char * uri
+mkcol(sess,uri)
+	ne_session * sess
+	char * uri
+CODE:
+	RETVAL = 	ne_mkcol(sess,uri);
+OUTPUT:
+	RETVAL
 
 
 int
-dav_move(sess,overwrite,src,dest)
-	http_session * sess
+move(sess,overwrite,src,dest)
+	ne_session * sess
 	int overwrite
-	const char * src
-	const char * dest
-
-
-dav_propfind_handler *
-dav_propfind_create(sess,uri,depth)
-	http_session * sess
-	const char * uri
-	int depth
-
-
-int
-dav_propnames(sess,href,depth,results)
-	http_session * sess
-	const char * href
-	int depth
-	CV * results
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (results)
-                {
-                SvREFCNT_inc ((SV *)results) ;
-                hv_store (pObjHV, "__cb__3", 7, (SV *)results, 0) ; 
-                }
-	RETVAL = 	dav_propnames(sess,href,depth,results?&neon_cb___cb__3:NULL,pObject);
+	char * src
+	char * dest
+CODE:
+	RETVAL = 	ne_move(sess,overwrite,src,dest);
 OUTPUT:
 	RETVAL
 
 
 int
-dav_proppatch(sess,uri,items)
-	http_session * sess
-	const char * uri
-	const dav_proppatch_operation * items
+options(sess,uri,caps)
+	ne_session * sess
+	char * uri
+	ne_server_capabilities * caps
+CODE:
+	RETVAL = 	ne_options(sess,uri,caps);
+OUTPUT:
+	RETVAL
 
 
 int
-dav_simple_propfind(sess,uri,depth,props,results)
-	http_session * sess
-	const char * uri
+post(sess,uri,fd,buffer)
+	ne_session * sess
+	char * uri
+	int fd
+	char * buffer
+CODE:
+	RETVAL = 	ne_post(sess,uri,fd,buffer);
+OUTPUT:
+	RETVAL
+
+
+ne_propfind_handler *
+propfind_create(sess,uri,depth)
+	ne_session * sess
+	char * uri
 	int depth
-	const dav_propname * props
+CODE:
+	RETVAL = 	ne_propfind_create(sess,uri,depth);
+OUTPUT:
+	RETVAL
+
+
+int
+propnames(sess,href,depth,results)
+	ne_session * sess
+	char * href
+	int depth
 	CV * results
 
         PREINIT:
@@ -1834,189 +1967,60 @@ dav_simple_propfind(sess,uri,depth,props,results)
                 SvREFCNT_inc ((SV *)results) ;
                 hv_store (pObjHV, "__cb__4", 7, (SV *)results, 0) ; 
                 }
-	RETVAL = 	dav_simple_propfind(sess,uri,depth,props,results?&neon_cb___cb__4:NULL,pObject);
+	RETVAL = 	ne_propnames(sess,href,depth,results?&neon_cb___cb__4:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 int
-dav_simple_request(sess,req)
-	http_session * sess
-	http_req * req
-
-
-int
-dav_unlock(sess,lock)
-	http_session * sess
-	struct dav_lock * lock
-
-
-void
-decide_proxy(sess,use_proxy)
-	http_session * sess
-	CV * use_proxy
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (use_proxy)
-                {
-                SvREFCNT_inc ((SV *)use_proxy) ;
-                hv_store (pObjHV, "__cb__5", 7, (SV *)use_proxy, 0) ; 
-                }
-	http_session_decide_proxy(sess,use_proxy?&neon_cb___cb__5:NULL,pObject);
-
-
-int
-destroy(sess)
-	http_session * sess
+proppatch(sess,uri,items)
+	ne_session * sess
+	char * uri
+	ne_proppatch_operation * items
 CODE:
-	RETVAL = 	http_session_destroy(sess);
-OUTPUT:
-	RETVAL
-
-
-void
-forget_auth(sess)
-	http_session * sess
-CODE:
-	http_forget_auth(sess);
-
-
-int
-get(sess,uri,f)
-	http_session * sess
-	const char * uri
-	FILE * f
-CODE:
-	RETVAL = 	http_get(sess,uri,f);
-OUTPUT:
-	RETVAL
-
-
-const char *
-get_error(sess)
-	http_session * sess
-CODE:
-	RETVAL = 	http_get_error(sess);
-OUTPUT:
-	RETVAL
-
-
-int
-get_range(sess,uri,range,f)
-	http_session * sess
-	const char * uri
-	http_content_range * range
-	FILE * f
-CODE:
-	RETVAL = 	http_get_range(sess,uri,range,f);
-OUTPUT:
-	RETVAL
-
-
-const char *
-get_scheme(sess)
-	http_session * sess
-CODE:
-	RETVAL = 	http_get_scheme(sess);
-OUTPUT:
-	RETVAL
-
-
-const char *
-get_server_hostport(sess)
-	http_session * sess
-CODE:
-	RETVAL = 	http_get_server_hostport(sess);
-OUTPUT:
-	RETVAL
-
-
-int
-getmodtime(sess,uri,modtime)
-	http_session * sess
-	const char * uri
-	time_t * modtime
-CODE:
-	RETVAL = 	http_getmodtime(sess,uri,modtime);
-OUTPUT:
-	RETVAL
-
-
-void *
-hook_private(sess,id)
-	http_session * sess
-	const char * id
-CODE:
-	RETVAL = 	http_session_hook_private(sess,id);
-OUTPUT:
-	RETVAL
-
-
-int
-options(sess,uri,caps)
-	http_session * sess
-	const char * uri
-	http_server_capabilities * caps
-CODE:
-	RETVAL = 	http_options(sess,uri,caps);
-OUTPUT:
-	RETVAL
-
-
-int
-post(sess,uri,f,buffer)
-	http_session * sess
-	const char * uri
-	FILE * f
-	const char * buffer
-CODE:
-	RETVAL = 	http_post(sess,uri,f,buffer);
+	RETVAL = 	ne_proppatch(sess,uri,items);
 OUTPUT:
 	RETVAL
 
 
 int
 proxy(sess,hostname,port)
-	http_session * sess
-	const char * hostname
+	ne_session * sess
+	char * hostname
 	int port
 CODE:
-	RETVAL = 	http_session_proxy(sess,hostname,port);
+	RETVAL = 	ne_session_proxy(sess,hostname,port);
 OUTPUT:
 	RETVAL
 
 
 int
-put(sess,uri,f)
-	http_session * sess
-	const char * uri
-	FILE * f
+put(sess,uri,fd)
+	ne_session * sess
+	char * uri
+	int fd
 CODE:
-	RETVAL = 	http_put(sess,uri,f);
+	RETVAL = 	ne_put(sess,uri,fd);
 OUTPUT:
 	RETVAL
 
 
 int
-put_if_unmodified(sess,uri,stream,modtime)
-	http_session * sess
-	const char * uri
-	FILE * stream
+put_if_unmodified(sess,uri,fd,modtime)
+	ne_session * sess
+	char * uri
+	int fd
 	time_t modtime
 CODE:
-	RETVAL = 	http_put_if_unmodified(sess,uri,stream,modtime);
+	RETVAL = 	ne_put_if_unmodified(sess,uri,fd,modtime);
 OUTPUT:
 	RETVAL
 
 
 int
 read_file(sess,uri,reader)
-	http_session * sess
-	const char * uri
+	ne_session * sess
+	char * uri
 	CV * reader
 
         PREINIT:
@@ -2027,25 +2031,25 @@ read_file(sess,uri,reader)
             if (reader)
                 {
                 SvREFCNT_inc ((SV *)reader) ;
-                hv_store (pObjHV, "__cb__6", 7, (SV *)reader, 0) ; 
+                hv_store (pObjHV, "__cb__5", 7, (SV *)reader, 0) ; 
                 }
-	RETVAL = 	http_read_file(sess,uri,reader?&neon_cb___cb__6:NULL,pObject);
+	RETVAL = 	ne_read_file(sess,uri,reader?&neon_cb___cb__5:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 const char *
 redirect_location(sess)
-	http_session * sess
+	ne_session * sess
 CODE:
-	RETVAL = 	http_redirect_location(sess);
+	RETVAL = 	ne_redirect_location(sess);
 OUTPUT:
 	RETVAL
 
 
 void
 redirect_register(sess,confirm,notify)
-	http_session * sess
+	ne_session * sess
 	CV * confirm
 	CV * notify
 
@@ -2057,76 +2061,76 @@ redirect_register(sess,confirm,notify)
             if (confirm)
                 {
                 SvREFCNT_inc ((SV *)confirm) ;
-                hv_store (pObjHV, "__cb__7", 7, (SV *)confirm, 0) ; 
+                hv_store (pObjHV, "__cb__6", 7, (SV *)confirm, 0) ; 
                 }
 
             if (notify)
                 {
                 SvREFCNT_inc ((SV *)notify) ;
-                hv_store (pObjHV, "__cb__8", 7, (SV *)notify, 0) ; 
+                hv_store (pObjHV, "__cb__7", 7, (SV *)notify, 0) ; 
                 }
-	http_redirect_register(sess,confirm?&neon_cb___cb__7:NULL,notify?&neon_cb___cb__8:NULL,pObject);
+	ne_redirect_register(sess,confirm?&neon_cb___cb__6:NULL,notify?&neon_cb___cb__7:NULL,pObject);
 
 
-http_req *
+ne_request *
 request_create(sess,method,uri)
-	http_session * sess
-	const char * method
-	const char * uri
+	ne_session * sess
+	char * method
+	char * uri
 CODE:
-	RETVAL = 	http_request_create(sess,method,uri);
+	RETVAL = 	ne_request_create(sess,method,uri);
 OUTPUT:
 	RETVAL
 
 
 int
 server(sess,hostname,port)
-	http_session * sess
-	const char * hostname
+	ne_session * sess
+	char * hostname
 	int port
 CODE:
-	RETVAL = 	http_session_server(sess,hostname,port);
+	RETVAL = 	ne_session_server(sess,hostname,port);
 OUTPUT:
 	RETVAL
 
 
 int
 set_accept_secure_upgrade(sess,acc_upgrade)
-	http_session * sess
+	ne_session * sess
 	int acc_upgrade
 CODE:
-	RETVAL = 	http_set_accept_secure_upgrade(sess,acc_upgrade);
+	RETVAL = 	ne_set_accept_secure_upgrade(sess,acc_upgrade);
 OUTPUT:
 	RETVAL
 
 
 void
 set_error(sess,errstring)
-	http_session * sess
-	const char * errstring
+	ne_session * sess
+	char * errstring
 CODE:
-	http_set_error(sess,errstring);
+	ne_set_error(sess,errstring);
 
 
 void
 set_expect100(sess,use_expect100)
-	http_session * sess
+	ne_session * sess
 	int use_expect100
 CODE:
-	http_set_expect100(sess,use_expect100);
+	ne_set_expect100(sess,use_expect100);
 
 
 void
 set_persist(sess,persist)
-	http_session * sess
+	ne_session * sess
 	int persist
 CODE:
-	http_set_persist(sess,persist);
+	ne_set_persist(sess,persist);
 
 
 void
 set_progress(sess,progress)
-	http_session * sess
+	ne_session * sess
 	CV * progress
 
         PREINIT:
@@ -2137,14 +2141,60 @@ set_progress(sess,progress)
             if (progress)
                 {
                 SvREFCNT_inc ((SV *)progress) ;
-                hv_store (pObjHV, "__cb__9", 7, (SV *)progress, 0) ; 
+                hv_store (pObjHV, "__cb__8", 7, (SV *)progress, 0) ; 
                 }
-	http_set_progress(sess,progress?&neon_cb___cb__9:NULL,pObject);
+	ne_set_progress(sess,progress?&neon_cb___cb__8:NULL,pObject);
 
 
 void
 set_proxy_auth(sess,callback)
-	http_session * sess
+	ne_session * sess
+	CV * callback
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (callback)
+                {
+                SvREFCNT_inc ((SV *)callback) ;
+                hv_store (pObjHV, "__cb__9", 7, (SV *)callback, 0) ; 
+                }
+	ne_set_proxy_auth(sess,callback?&neon_cb___cb__9:NULL,pObject);
+
+
+int
+set_request_secure_upgrade(sess,req_upgrade)
+	ne_session * sess
+	int req_upgrade
+CODE:
+	RETVAL = 	ne_set_request_secure_upgrade(sess,req_upgrade);
+OUTPUT:
+	RETVAL
+
+
+int
+set_secure(sess,secure)
+	ne_session * sess
+	int secure
+CODE:
+	RETVAL = 	ne_set_secure(sess,secure);
+OUTPUT:
+	RETVAL
+
+
+void
+set_secure_context(sess,ctx)
+	ne_session * sess
+	nssl_context * ctx
+CODE:
+	ne_set_secure_context(sess,ctx);
+
+
+void
+set_server_auth(sess,callback)
+	ne_session * sess
 	CV * callback
 
         PREINIT:
@@ -2157,58 +2207,12 @@ set_proxy_auth(sess,callback)
                 SvREFCNT_inc ((SV *)callback) ;
                 hv_store (pObjHV, "__cb__10", 8, (SV *)callback, 0) ; 
                 }
-	http_set_proxy_auth(sess,callback?&neon_cb___cb__10:NULL,pObject);
-
-
-int
-set_request_secure_upgrade(sess,req_upgrade)
-	http_session * sess
-	int req_upgrade
-CODE:
-	RETVAL = 	http_set_request_secure_upgrade(sess,req_upgrade);
-OUTPUT:
-	RETVAL
-
-
-int
-set_secure(sess,secure)
-	http_session * sess
-	int secure
-CODE:
-	RETVAL = 	http_set_secure(sess,secure);
-OUTPUT:
-	RETVAL
-
-
-void
-set_secure_context(sess,ctx)
-	http_session * sess
-	nssl_context * ctx
-CODE:
-	http_set_secure_context(sess,ctx);
-
-
-void
-set_server_auth(sess,callback)
-	http_session * sess
-	CV * callback
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (callback)
-                {
-                SvREFCNT_inc ((SV *)callback) ;
-                hv_store (pObjHV, "__cb__11", 8, (SV *)callback, 0) ; 
-                }
-	http_set_server_auth(sess,callback?&neon_cb___cb__11:NULL,pObject);
+	ne_set_server_auth(sess,callback?&neon_cb___cb__10:NULL,pObject);
 
 
 void
 set_status(sess,status)
-	http_session * sess
+	ne_session * sess
 	CV * status
 
         PREINIT:
@@ -2219,196 +2223,175 @@ set_status(sess,status)
             if (status)
                 {
                 SvREFCNT_inc ((SV *)status) ;
-                hv_store (pObjHV, "__cb__12", 8, (SV *)status, 0) ; 
+                hv_store (pObjHV, "__cb__11", 8, (SV *)status, 0) ; 
                 }
-	http_set_status(sess,status?&neon_cb___cb__12:NULL,pObject);
+	ne_set_status(sess,status?&neon_cb___cb__11:NULL,pObject);
 
 
 void
 set_useragent(sess,product)
-	http_session * sess
-	const char * product
+	ne_session * sess
+	char * product
 CODE:
-	http_set_useragent(sess,product);
+	ne_set_useragent(sess,product);
+
+
+int
+simple_propfind(sess,uri,depth,props,results)
+	ne_session * sess
+	char * uri
+	int depth
+	ne_propname * props
+	CV * results
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (results)
+                {
+                SvREFCNT_inc ((SV *)results) ;
+                hv_store (pObjHV, "__cb__12", 8, (SV *)results, 0) ; 
+                }
+	RETVAL = 	ne_simple_propfind(sess,uri,depth,props,results?&neon_cb___cb__12:NULL,pObject);
+OUTPUT:
+	RETVAL
+
+
+int
+simple_request(sess,req)
+	ne_session * sess
+	ne_request * req
+CODE:
+	RETVAL = 	ne_simple_request(sess,req);
+OUTPUT:
+	RETVAL
+
+
+int
+unlock(sess,lock)
+	ne_session * sess
+	struct ne_lock * lock
+CODE:
+	RETVAL = 	ne_unlock(sess,lock);
+OUTPUT:
+	RETVAL
 
 
 int
 version_pre_http11(sess)
-	http_session * sess
+	ne_session * sess
 CODE:
-	RETVAL = 	http_version_pre_http11(sess);
+	RETVAL = 	ne_version_pre_http11(sess);
 OUTPUT:
 	RETVAL
 
-MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Hip
+MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Buffer
 
 
-dav_207_parser *
-dav_207_create(parser)
-	hip_xml_parser * parser
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-	RETVAL = 	dav_207_create(parser,pObject);
-OUTPUT:
-	RETVAL
+void
+altered(buf)
+	ne_buffer * buf
+CODE:
+	ne_buffer_altered(buf);
 
 
 int
-xml_currentline(p)
-	hip_xml_parser * p
-CODE:
-	RETVAL = 	hip_xml_currentline(p);
-OUTPUT:
-	RETVAL
-
-
-void
-xml_destroy(p)
-	hip_xml_parser * p
-CODE:
-	hip_xml_destroy(p);
-
-
-const char *
-xml_get_error(p)
-	hip_xml_parser * p
-CODE:
-	RETVAL = 	hip_xml_get_error(p);
-OUTPUT:
-	RETVAL
-
-
-void
-xml_parse(p,block,len)
-	hip_xml_parser * p
-	const char * block
+append(buf,data,len)
+	ne_buffer * buf
+	char * data
 	size_t len
 CODE:
-	hip_xml_parse(p,block,len);
+	RETVAL = 	ne_buffer_append(buf,data,len);
+OUTPUT:
+	RETVAL
 
 
 void
-xml_push_handler(p,elements,validate_cb,startelm_cb,endelm_cb)
-	hip_xml_parser * p
-	const struct hip_xml_elm * elements
-	hip_xml_validate_cb validate_cb
-	CV * startelm_cb
-	CV * endelm_cb
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (startelm_cb)
-                {
-                SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__13", 8, (SV *)startelm_cb, 0) ; 
-                }
-
-            if (endelm_cb)
-                {
-                SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__14", 8, (SV *)endelm_cb, 0) ; 
-                }
-	hip_xml_push_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__13:NULL,endelm_cb?&neon_cb___cb__14:NULL,pObject);
-
-
-void
-xml_push_mixed_handler(p,elements,validate_cb,startelm_cb,cdata_cb,endelm_cb)
-	hip_xml_parser * p
-	const struct hip_xml_elm * elements
-	hip_xml_validate_cb validate_cb
-	CV * startelm_cb
-	CV * cdata_cb
-	CV * endelm_cb
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (startelm_cb)
-                {
-                SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__15", 8, (SV *)startelm_cb, 0) ; 
-                }
-
-            if (cdata_cb)
-                {
-                SvREFCNT_inc ((SV *)cdata_cb) ;
-                hv_store (pObjHV, "__cb__16", 8, (SV *)cdata_cb, 0) ; 
-                }
-
-            if (endelm_cb)
-                {
-                SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__17", 8, (SV *)endelm_cb, 0) ; 
-                }
-	hip_xml_push_mixed_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__15:NULL,cdata_cb?&neon_cb___cb__16:NULL,endelm_cb?&neon_cb___cb__17:NULL,pObject);
-
-
-void
-xml_set_error(p,msg)
-	hip_xml_parser * p
-	const char * msg
+clear(buf)
+	ne_buffer * buf
 CODE:
-	hip_xml_set_error(p,msg);
+	ne_buffer_clear(buf);
+
+
+void
+destroy(buf)
+	ne_buffer * buf
+CODE:
+	ne_buffer_destroy(buf);
+
+
+char *
+finish(buf)
+	ne_buffer * buf
+CODE:
+	RETVAL = 	ne_buffer_finish(buf);
+OUTPUT:
+	RETVAL
 
 
 int
-xml_valid(p)
-	hip_xml_parser * p
+grow(buf,size)
+	ne_buffer * buf
+	size_t size
 CODE:
-	RETVAL = 	hip_xml_valid(p);
+	RETVAL = 	ne_buffer_grow(buf,size);
+OUTPUT:
+	RETVAL
+
+
+int
+zappend(buf,str)
+	ne_buffer * buf
+	char * str
+CODE:
+	RETVAL = 	ne_buffer_zappend(buf,str);
 OUTPUT:
 	RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Lock
 
 
-struct dav_lock *
+struct ne_lock *
 copy(lock)
-	const struct dav_lock * lock
+	struct ne_lock * lock
 CODE:
-	RETVAL = 	dav_lock_copy(lock);
+	RETVAL = 	ne_lock_copy(lock);
 OUTPUT:
 	RETVAL
 
 
 void
 free(lock)
-	struct dav_lock * lock
+	struct ne_lock * lock
 CODE:
-	dav_lock_free(lock);
+	ne_lock_free(lock);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::LockSession
 
 
 void
 add(sess,lock)
-	dav_lock_session * sess
-	struct dav_lock * lock
+	ne_lock_session * sess
+	struct ne_lock * lock
 CODE:
-	dav_lock_add(sess,lock);
+	ne_lock_add(sess,lock);
 
 
-struct dav_lock *
+struct ne_lock *
 find(sess,uri)
-	dav_lock_session * sess
-	const char * uri
+	ne_lock_session * sess
+	char * uri
 CODE:
-	RETVAL = 	dav_lock_find(sess,uri);
+	RETVAL = 	ne_lock_find(sess,uri);
 OUTPUT:
 	RETVAL
 
 
 int
 iterate(sess,func)
-	dav_lock_session * sess
+	ne_lock_session * sess
 	CV * func
 
         PREINIT:
@@ -2419,19 +2402,19 @@ iterate(sess,func)
             if (func)
                 {
                 SvREFCNT_inc ((SV *)func) ;
-                hv_store (pObjHV, "__cb__18", 8, (SV *)func, 0) ; 
+                hv_store (pObjHV, "__cb__13", 8, (SV *)func, 0) ; 
                 }
-	RETVAL = 	dav_lock_iterate(sess,func?&neon_cb___cb__18:NULL,pObject);
+	RETVAL = 	ne_lock_iterate(sess,func?&neon_cb___cb__13:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 void
 remove(sess,lock)
-	dav_lock_session * sess
-	struct dav_lock * lock
+	ne_lock_session * sess
+	struct ne_lock * lock
 CODE:
-	dav_lock_remove(sess,lock);
+	ne_lock_remove(sess,lock);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::MD5
 
@@ -2452,45 +2435,55 @@ init_ctx(ctx)
 CODE:
 	ne_md5_init_ctx(ctx);
 
+
+void *
+read_ctx(ctx,resbuf)
+	struct ne_md5_ctx * ctx
+	void * resbuf
+CODE:
+	RETVAL = 	ne_md5_read_ctx(ctx,resbuf);
+OUTPUT:
+	RETVAL
+
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::MultiStatus
 
 
 void
 destroy(p)
-	dav_207_parser * p
+	ne_207_parser * p
 CODE:
-	dav_207_destroy(p);
+	ne_207_destroy(p);
 
 
 void *
 get_current_propstat(p)
-	dav_207_parser * p
+	ne_207_parser * p
 CODE:
-	RETVAL = 	dav_207_get_current_propstat(p);
+	RETVAL = 	ne_207_get_current_propstat(p);
 OUTPUT:
 	RETVAL
 
 
 void *
 get_current_response(p)
-	dav_207_parser * p
+	ne_207_parser * p
 CODE:
-	RETVAL = 	dav_207_get_current_response(p);
+	RETVAL = 	ne_207_get_current_response(p);
 OUTPUT:
 	RETVAL
 
 
 void
 ignore_unknown(p)
-	dav_207_parser * p
+	ne_207_parser * p
 CODE:
-	dav_207_ignore_unknown(p);
+	ne_207_ignore_unknown(p);
 
 
 void
 set_propstat_handlers(p,start,end)
-	dav_207_parser * p
-	dav_207_start_propstat start
+	ne_207_parser * p
+	ne_207_start_propstat start
 	CV * end
 
         PREINIT:
@@ -2501,15 +2494,15 @@ set_propstat_handlers(p,start,end)
             if (end)
                 {
                 SvREFCNT_inc ((SV *)end) ;
-                hv_store (pObjHV, "__cb__19", 8, (SV *)end, 0) ; 
+                hv_store (pObjHV, "__cb__14", 8, (SV *)end, 0) ; 
                 }
-	dav_207_set_propstat_handlers(p,start,end?&neon_cb___cb__19:NULL);
+	ne_207_set_propstat_handlers(p,start,end?&neon_cb___cb__14:NULL);
 
 
 void
 set_response_handlers(p,start,end)
-	dav_207_parser * p
-	dav_207_start_response start
+	ne_207_parser * p
+	ne_207_start_response start
 	CV * end
 
         PREINIT:
@@ -2520,16 +2513,16 @@ set_response_handlers(p,start,end)
             if (end)
                 {
                 SvREFCNT_inc ((SV *)end) ;
-                hv_store (pObjHV, "__cb__20", 8, (SV *)end, 0) ; 
+                hv_store (pObjHV, "__cb__15", 8, (SV *)end, 0) ; 
                 }
-	dav_207_set_response_handlers(p,start,end?&neon_cb___cb__20:NULL);
+	ne_207_set_response_handlers(p,start,end?&neon_cb___cb__15:NULL);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Propfind
 
 
 int
 allprop(handler,result)
-	dav_propfind_handler * handler
+	ne_propfind_handler * handler
 	CV * result
 
         PREINIT:
@@ -2540,51 +2533,51 @@ allprop(handler,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__21", 8, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__16", 8, (SV *)result, 0) ; 
                 }
-	RETVAL = 	dav_propfind_allprop(handler,result?&neon_cb___cb__21:NULL,pObject);
+	RETVAL = 	ne_propfind_allprop(handler,result?&neon_cb___cb__16:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 void *
 current_private(handler)
-	dav_propfind_handler * handler
+	ne_propfind_handler * handler
 CODE:
-	RETVAL = 	dav_propfind_current_private(handler);
+	RETVAL = 	ne_propfind_current_private(handler);
 OUTPUT:
 	RETVAL
 
 
 void
 destroy(handler)
-	dav_propfind_handler * handler
+	ne_propfind_handler * handler
 CODE:
-	dav_propfind_destroy(handler);
+	ne_propfind_destroy(handler);
 
 
-hip_xml_parser *
+ne_xml_parser *
 get_parser(handler)
-	dav_propfind_handler * handler
+	ne_propfind_handler * handler
 CODE:
-	RETVAL = 	dav_propfind_get_parser(handler);
+	RETVAL = 	ne_propfind_get_parser(handler);
 OUTPUT:
 	RETVAL
 
 
-http_req *
+ne_request *
 get_request(handler)
-	dav_propfind_handler * handler
+	ne_propfind_handler * handler
 CODE:
-	RETVAL = 	dav_propfind_get_request(handler);
+	RETVAL = 	ne_propfind_get_request(handler);
 OUTPUT:
 	RETVAL
 
 
 int
 named(handler,prop,result)
-	dav_propfind_handler * handler
-	const dav_propname * prop
+	ne_propfind_handler * handler
+	ne_propname * prop
 	CV * result
 
         PREINIT:
@@ -2595,27 +2588,27 @@ named(handler,prop,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__22", 8, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__17", 8, (SV *)result, 0) ; 
                 }
-	RETVAL = 	dav_propfind_named(handler,prop,result?&neon_cb___cb__22:NULL,pObject);
+	RETVAL = 	ne_propfind_named(handler,prop,result?&neon_cb___cb__17:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 void
 set_private(handler,creator,userdata)
-	dav_propfind_handler * handler
-	dav_props_create_complex creator
+	ne_propfind_handler * handler
+	ne_props_create_complex creator
 	void * userdata
 CODE:
-	dav_propfind_set_private(handler,creator,userdata);
+	ne_propfind_set_private(handler,creator,userdata);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Propset
 
 
 int
 iterate(set,iterator)
-	const dav_prop_result_set * set
+	ne_prop_result_set * set
 	CV * iterator
 
         PREINIT:
@@ -2626,48 +2619,48 @@ iterate(set,iterator)
             if (iterator)
                 {
                 SvREFCNT_inc ((SV *)iterator) ;
-                hv_store (pObjHV, "__cb__23", 8, (SV *)iterator, 0) ; 
+                hv_store (pObjHV, "__cb__18", 8, (SV *)iterator, 0) ; 
                 }
-	RETVAL = 	dav_propset_iterate(set,iterator?&neon_cb___cb__23:NULL,pObject);
+	RETVAL = 	ne_propset_iterate(set,iterator?&neon_cb___cb__18:NULL,pObject);
 OUTPUT:
 	RETVAL
 
 
 const char *
 lang(set,pname)
-	const dav_prop_result_set * set
-	const dav_propname * pname
+	ne_prop_result_set * set
+	ne_propname * pname
 CODE:
-	RETVAL = 	dav_propset_lang(set,pname);
+	RETVAL = 	ne_propset_lang(set,pname);
 OUTPUT:
 	RETVAL
 
 
 void *
 private(set)
-	const dav_prop_result_set * set
+	ne_prop_result_set * set
 CODE:
-	RETVAL = 	dav_propset_private(set);
+	RETVAL = 	ne_propset_private(set);
 OUTPUT:
 	RETVAL
 
 
-const http_status *
+const ne_status *
 status(set,propname)
-	const dav_prop_result_set * set
-	const dav_propname * propname
+	ne_prop_result_set * set
+	ne_propname * propname
 CODE:
-	RETVAL = 	dav_propset_status(set,propname);
+	RETVAL = 	ne_propset_status(set,propname);
 OUTPUT:
 	RETVAL
 
 
 const char *
 value(set,propname)
-	const dav_prop_result_set * set
-	const dav_propname * propname
+	ne_prop_result_set * set
+	ne_propname * propname
 CODE:
-	RETVAL = 	dav_propset_value(set,propname);
+	RETVAL = 	ne_propset_value(set,propname);
 OUTPUT:
 	RETVAL
 
@@ -2675,17 +2668,25 @@ MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Request
 
 
 void
-add_request_header(req,name,value)
-	http_req * req
-	const char * name
-	const char * value
+add_depth_header(req,depth)
+	ne_request * req
+	int depth
 CODE:
-	http_add_request_header(req,name,value);
+	ne_add_depth_header(req,depth);
+
+
+void
+add_request_header(req,name,value)
+	ne_request * req
+	char * name
+	char * value
+CODE:
+	ne_add_request_header(req,name,value);
 
 
 void
 add_response_body_reader(req,accpt,rdr)
-	http_req * req
+	ne_request * req
 	CV * accpt
 	CV * rdr
 
@@ -2697,20 +2698,20 @@ add_response_body_reader(req,accpt,rdr)
             if (accpt)
                 {
                 SvREFCNT_inc ((SV *)accpt) ;
-                hv_store (pObjHV, "__cb__24", 8, (SV *)accpt, 0) ; 
+                hv_store (pObjHV, "__cb__19", 8, (SV *)accpt, 0) ; 
                 }
 
             if (rdr)
                 {
                 SvREFCNT_inc ((SV *)rdr) ;
-                hv_store (pObjHV, "__cb__25", 8, (SV *)rdr, 0) ; 
+                hv_store (pObjHV, "__cb__20", 8, (SV *)rdr, 0) ; 
                 }
-	http_add_response_body_reader(req,accpt?&neon_cb___cb__24:NULL,rdr?&neon_cb___cb__25:NULL,pObject);
+	ne_add_response_body_reader(req,accpt?&neon_cb___cb__19:NULL,rdr?&neon_cb___cb__20:NULL,pObject);
 
 
 void
 add_response_header_catcher(req,hdl)
-	http_req * req
+	ne_request * req
 	CV * hdl
 
         PREINIT:
@@ -2721,15 +2722,15 @@ add_response_header_catcher(req,hdl)
             if (hdl)
                 {
                 SvREFCNT_inc ((SV *)hdl) ;
-                hv_store (pObjHV, "__cb__26", 8, (SV *)hdl, 0) ; 
+                hv_store (pObjHV, "__cb__21", 8, (SV *)hdl, 0) ; 
                 }
-	http_add_response_header_catcher(req,hdl?&neon_cb___cb__26:NULL,pObject);
+	ne_add_response_header_catcher(req,hdl?&neon_cb___cb__21:NULL,pObject);
 
 
 void
 add_response_header_handler(req,name,hdl)
-	http_req * req
-	const char * name
+	ne_request * req
+	char * name
 	CV * hdl
 
         PREINIT:
@@ -2740,115 +2741,114 @@ add_response_header_handler(req,name,hdl)
             if (hdl)
                 {
                 SvREFCNT_inc ((SV *)hdl) ;
-                hv_store (pObjHV, "__cb__27", 8, (SV *)hdl, 0) ; 
+                hv_store (pObjHV, "__cb__22", 8, (SV *)hdl, 0) ; 
                 }
-	http_add_response_header_handler(req,name,hdl?&neon_cb___cb__27:NULL,pObject);
+	ne_add_response_header_handler(req,name,hdl?&neon_cb___cb__22:NULL,pObject);
 
 
 int
 begin_request(req)
-	http_req * req
+	ne_request * req
 CODE:
-	RETVAL = 	http_begin_request(req);
+	RETVAL = 	ne_begin_request(req);
 OUTPUT:
 	RETVAL
-
-
-void
-dav_add_depth_header(req,depth)
-	http_req * req
-	int depth
-
-
-void
-dav_lock_using_parent(req,uri)
-	http_req * req
-	const char * uri
-
-
-void
-dav_lock_using_resource(req,uri,depth)
-	http_req * req
-	const char * uri
-	int depth
 
 
 int
 end_request(req)
-	http_req * req
+	ne_request * req
 CODE:
-	RETVAL = 	http_end_request(req);
+	RETVAL = 	ne_end_request(req);
 OUTPUT:
 	RETVAL
 
 
-sbuffer
-get_request_headers(req)
-	http_req * req
-CODE:
-	RETVAL = 	http_get_request_headers(req);
-OUTPUT:
-	RETVAL
-
-
-const http_status *
+const ne_status *
 get_status(req)
-	http_req * req
+	ne_request * req
 CODE:
-	RETVAL = 	http_get_status(req);
+	RETVAL = 	ne_get_status(req);
 OUTPUT:
 	RETVAL
+
+
+void
+lock_using_parent(req,uri)
+	ne_request * req
+	char * uri
+CODE:
+	ne_lock_using_parent(req,uri);
+
+
+void
+lock_using_resource(req,uri,depth)
+	ne_request * req
+	char * uri
+	int depth
+CODE:
+	ne_lock_using_resource(req,uri,depth);
 
 
 ssize_t
 read_response_block(req,buffer,buflen)
-	http_req * req
+	ne_request * req
 	char * buffer
 	size_t buflen
 CODE:
-	RETVAL = 	http_read_response_block(req,buffer,buflen);
+	RETVAL = 	ne_read_response_block(req,buffer,buflen);
 OUTPUT:
 	RETVAL
 
 
 void
 request_destroy(req)
-	http_req * req
+	ne_request * req
 CODE:
-	http_request_destroy(req);
+	ne_request_destroy(req);
 
 
 int
 request_dispatch(req)
-	http_req * req
+	ne_request * req
 CODE:
-	RETVAL = 	http_request_dispatch(req);
+	RETVAL = 	ne_request_dispatch(req);
 OUTPUT:
 	RETVAL
 
 
 void *
 request_hook_private(req,id)
-	http_req * req
-	const char * id
+	ne_request * req
+	char * id
 CODE:
-	RETVAL = 	http_request_hook_private(req,id);
+	RETVAL = 	ne_request_hook_private(req,id);
 OUTPUT:
 	RETVAL
 
 
 void
 set_request_body_buffer(req,buffer,size)
-	http_req * req
-	const char * buffer
+	ne_request * req
+	char * buffer
 	size_t size
 CODE:
-	http_set_request_body_buffer(req,buffer,size);
+	ne_set_request_body_buffer(req,buffer,size);
+
+
+int
+set_request_body_fd(req,fd)
+	ne_request * req
+	int fd
+CODE:
+	RETVAL = 	ne_set_request_body_fd(req,fd);
+OUTPUT:
+	RETVAL
 
 
 void
 set_request_body_provider(req,size,provider)
-	http_req * req
+	ne_request * req
 	size_t size
 	CV * provider
 
@@ -2860,19 +2860,9 @@ set_request_body_provider(req,size,provider)
             if (provider)
                 {
                 SvREFCNT_inc ((SV *)provider) ;
-                hv_store (pObjHV, "__cb__28", 8, (SV *)provider, 0) ; 
+                hv_store (pObjHV, "__cb__23", 8, (SV *)provider, 0) ; 
                 }
-	http_set_request_body_provider(req,size,provider?&neon_cb___cb__28:NULL,pObject);
-
-
-int
-set_request_body_stream(req,stream)
-	http_req * req
-	FILE * stream
-CODE:
-	RETVAL = 	http_set_request_body_stream(req,stream);
-OUTPUT:
-	RETVAL
+	ne_set_request_body_provider(req,size,provider?&neon_cb___cb__23:NULL,pObject);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::SSL
 
@@ -2918,16 +2908,16 @@ set_cert_accept(c,accepter)
             if (accepter)
                 {
                 SvREFCNT_inc ((SV *)accepter) ;
-                hv_store (pObjHV, "__cb__29", 8, (SV *)accepter, 0) ; 
+                hv_store (pObjHV, "__cb__24", 8, (SV *)accepter, 0) ; 
                 }
-	sock_set_cert_accept(c,accepter?&neon_cb___cb__29:NULL,pObject);
+	sock_set_cert_accept(c,accepter?&neon_cb___cb__24:NULL,pObject);
 
 
 int
 set_client_cert(ctx,certfile,keyfile)
 	nssl_context * ctx
-	const char * certfile
-	const char * keyfile
+	char * certfile
+	char * keyfile
 CODE:
 	RETVAL = 	sock_set_client_cert(ctx,certfile,keyfile);
 OUTPUT:
@@ -2947,9 +2937,9 @@ set_key_prompt(c,prompt)
             if (prompt)
                 {
                 SvREFCNT_inc ((SV *)prompt) ;
-                hv_store (pObjHV, "__cb__30", 8, (SV *)prompt, 0) ; 
+                hv_store (pObjHV, "__cb__25", 8, (SV *)prompt, 0) ; 
                 }
-	sock_set_key_prompt(c,prompt?&neon_cb___cb__30:NULL,pObject);
+	sock_set_key_prompt(c,prompt?&neon_cb___cb__25:NULL,pObject);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Socket
 
@@ -2996,7 +2986,7 @@ OUTPUT:
 int
 fullwrite(sock,data,length)
 	nsocket * sock
-	const char * data
+	char * data
 	size_t length
 CODE:
 	RETVAL = 	sock_fullwrite(sock,data,length);
@@ -3077,9 +3067,9 @@ readfile_blocked(sock,length,reader)
             if (reader)
                 {
                 SvREFCNT_inc ((SV *)reader) ;
-                hv_store (pObjHV, "__cb__31", 8, (SV *)reader, 0) ; 
+                hv_store (pObjHV, "__cb__26", 8, (SV *)reader, 0) ; 
                 }
-	RETVAL = 	sock_readfile_blocked(sock,length,reader?&neon_cb___cb__31:NULL,pObject);
+	RETVAL = 	sock_readfile_blocked(sock,length,reader?&neon_cb___cb__26:NULL,pObject);
 OUTPUT:
 	RETVAL
 
@@ -3108,15 +3098,15 @@ register_progress(sock,cb)
             if (cb)
                 {
                 SvREFCNT_inc ((SV *)cb) ;
-                hv_store (pObjHV, "__cb__32", 8, (SV *)cb, 0) ; 
+                hv_store (pObjHV, "__cb__27", 8, (SV *)cb, 0) ; 
                 }
-	sock_register_progress(sock,cb?&neon_cb___cb__32:NULL,pObject);
+	sock_register_progress(sock,cb?&neon_cb___cb__27:NULL,pObject);
 
 
 int
 send_string(sock,string)
 	nsocket * sock
-	const char * string
+	char * string
 CODE:
 	RETVAL = 	sock_send_string(sock,string);
 OUTPUT:
@@ -3126,7 +3116,7 @@ OUTPUT:
 int
 sendline(sock,line)
 	nsocket * sock
-	const char * line
+	char * line
 CODE:
 	RETVAL = 	sock_sendline(sock,line);
 OUTPUT:
@@ -3136,159 +3126,151 @@ MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Util
 
 
 int
-dav_accept_207(userdata,req,status)
+accept_207(userdata,req,status)
 	void * userdata
-	http_req * req
-	http_status * status
-
-
-hip_xml_parser *
-hip_xml_create()
-
-
-void
-hip_xml_parse_v(userdata,block,len)
-	void * userdata
-	const char * block
-	size_t len
+	ne_request * req
+	ne_status * status
+CODE:
+	RETVAL = 	ne_accept_207(userdata,req,status);
+OUTPUT:
+	RETVAL
 
 
 int
-http_accept_2xx(userdata,req,st)
+accept_2xx(userdata,req,st)
 	void * userdata
-	http_req * req
-	http_status * st
+	ne_request * req
+	ne_status * st
+CODE:
+	RETVAL = 	ne_accept_2xx(userdata,req,st);
+OUTPUT:
+	RETVAL
 
 
 int
-http_accept_always(userdata,req,st)
+accept_always(userdata,req,st)
 	void * userdata
-	http_req * req
-	http_status * st
-
-
-void
-http_content_type_handler(userdata,value)
-	void * userdata
-	const char * value
+	ne_request * req
+	ne_status * st
+CODE:
+	RETVAL = 	ne_accept_always(userdata,req,st);
+OUTPUT:
+	RETVAL
 
 
 time_t
-http_dateparse(date)
-	const char * date
+asctime_parse(date)
+	char * date
+CODE:
+	RETVAL = 	ne_asctime_parse(date);
+OUTPUT:
+	RETVAL
+
+
+ne_buffer *
+buffer_create()
+CODE:
+	RETVAL = 	ne_buffer_create();
+OUTPUT:
+	RETVAL
+
+
+ne_buffer *
+buffer_create_sized(size)
+	size_t size
+CODE:
+	RETVAL = 	ne_buffer_create_sized(size);
+OUTPUT:
+	RETVAL
+
+
+void *
+calloc(len)
+	size_t len
+CODE:
+	RETVAL = 	ne_calloc(len);
+OUTPUT:
+	RETVAL
 
 
 void
-http_duplicate_header(userdata,value)
+content_type_handler(userdata,value)
 	void * userdata
-	const char * value
+	char * value
+CODE:
+	ne_content_type_handler(userdata,value);
 
 
 void
-http_handle_numeric_header(userdata,value)
-	void * userdata
-	const char * value
-
-
-int
-http_parse_statusline(status_line,s)
-	const char * status_line
-	http_status * s
-
-
-http_session *
-http_session_create()
-
-
-time_t
-ne_asctime_parse(date)
-	const char * date
-
-
-void *
-ne_calloc(len)
-	size_t len
-
-
-void *
-ne_md5_buffer(buffer,len,resblock)
-	const char * buffer
-	size_t len
-	void * resblock
-
-
-void
-ne_md5_process_block(buffer,len,ctx)
-	const void * buffer
-	size_t len
-	struct ne_md5_ctx * ctx
-
-
-void
-ne_md5_process_bytes(buffer,len,ctx)
-	const void * buffer
-	size_t len
-	struct ne_md5_ctx * ctx
-
-
-void *
-ne_md5_read_ctx(ctx,resbuf)
-	const struct ne_md5_ctx * ctx
-	void * resbuf
-
-
-int
-ne_md5_stream(stream,resblock)
-	FILE * stream
-	void * resblock
-
-
-void *
-ne_realloc(ptr,len)
-	void * ptr
-	size_t len
-
-
-time_t
-ne_rfc1036_parse(date)
-	const char * date
-
-
-char *
-ne_rfc1123_date(anytime)
-	time_t anytime
-
-
-time_t
-ne_rfc1123_parse(date)
-	const char * date
-
-
-char *
-ne_strdup(s)
-	const char * s
-
-
-char *
-ne_strndup(s,n)
-	const char * s
-	size_t n
-
-
-char *
-ne_utf8_decode(str)
-	const char * str
-
-
-char *
-ne_utf8_encode(str)
-	const char * str
-
-
-void
-neon_debug_init(stream,mask)
+debug_init(stream,mask)
 	FILE * stream
 	int mask
+CODE:
+	ne_debug_init(stream,mask);
+
+
+void
+duplicate_header(userdata,value)
+	void * userdata
+	char * value
+CODE:
+	ne_duplicate_header(userdata,value);
+
+
+void
+handle_numeric_header(userdata,value)
+	void * userdata
+	char * value
+CODE:
+	ne_handle_numeric_header(userdata,value);
+
+
+time_t
+httpdate_parse(date)
+	char * date
+CODE:
+	RETVAL = 	ne_httpdate_parse(date);
+OUTPUT:
+	RETVAL
+
+
+void *
+md5_buffer(buffer,len,resblock)
+	char * buffer
+	size_t len
+	void * resblock
+CODE:
+	RETVAL = 	ne_md5_buffer(buffer,len,resblock);
+OUTPUT:
+	RETVAL
+
+
+void
+md5_process_block(buffer,len,ctx)
+	void * buffer
+	size_t len
+	struct ne_md5_ctx * ctx
+CODE:
+	ne_md5_process_block(buffer,len,ctx);
+
+
+void
+md5_process_bytes(buffer,len,ctx)
+	void * buffer
+	size_t len
+	struct ne_md5_ctx * ctx
+CODE:
+	ne_md5_process_bytes(buffer,len,ctx);
+
+
+int
+md5_stream(stream,resblock)
+	FILE * stream
+	void * resblock
+CODE:
+	RETVAL = 	ne_md5_stream(stream,resblock);
+OUTPUT:
+	RETVAL
 
 
 void
@@ -3296,71 +3278,68 @@ neon_i18n_init()
 
 
 int
-neon_version_minimum(major,minor)
-	int major
-	int minor
+parse_statusline(status_line,s)
+	char * status_line
+	ne_status * s
+CODE:
+	RETVAL = 	ne_parse_statusline(status_line,s);
+OUTPUT:
+	RETVAL
 
 
-const char *
-neon_version_string()
-
-
-void
-sbuffer_altered(buf)
-	sbuffer buf
-
-
-int
-sbuffer_append(buf,data,len)
-	sbuffer buf
-	const char * data
+void *
+realloc(ptr,len)
+	void * ptr
 	size_t len
+CODE:
+	RETVAL = 	ne_realloc(ptr,len);
+OUTPUT:
+	RETVAL
 
 
-void
-sbuffer_clear(buf)
-	sbuffer buf
-
-
-sbuffer
-sbuffer_create()
-
-
-sbuffer
-sbuffer_create_sized(size)
-	size_t size
-
-
-char *
-sbuffer_data(buf)
-	sbuffer buf
-
-
-void
-sbuffer_destroy(buf)
-	sbuffer buf
+time_t
+rfc1036_parse(date)
+	char * date
+CODE:
+	RETVAL = 	ne_rfc1036_parse(date);
+OUTPUT:
+	RETVAL
 
 
 char *
-sbuffer_finish(buf)
-	sbuffer buf
+rfc1123_date(anytime)
+	time_t anytime
+CODE:
+	RETVAL = 	ne_rfc1123_date(anytime);
+OUTPUT:
+	RETVAL
 
 
-int
-sbuffer_grow(buf,size)
-	sbuffer buf
-	size_t size
+time_t
+rfc1123_parse(date)
+	char * date
+CODE:
+	RETVAL = 	ne_rfc1123_parse(date);
+OUTPUT:
+	RETVAL
 
 
-int
-sbuffer_size(buf)
-	sbuffer buf
+ne_session *
+session_create()
+CODE:
+	RETVAL = 	ne_session_create();
+OUTPUT:
+	RETVAL
 
 
-int
-sbuffer_zappend(buf,str)
-	sbuffer buf
-	const char * str
+char *
+shave(str,whitespace)
+	char * str
+	char * whitespace
+CODE:
+	RETVAL = 	ne_shave(str,whitespace);
+OUTPUT:
+	RETVAL
 
 
 nsocket *
@@ -3382,13 +3361,13 @@ sock_init()
 
 int
 sock_name_lookup(hostname,addr)
-	const char * hostname
+	char * hostname
 	struct in_addr * addr
 
 
 int
 sock_service_lookup(name)
-	const char * name
+	char * name
 
 
 int
@@ -3399,32 +3378,51 @@ sock_transfer(fd,sock,readlen)
 
 
 char *
+strdup(s)
+	char * s
+CODE:
+	RETVAL = 	ne_strdup(s);
+OUTPUT:
+	RETVAL
+
+
+char *
+strndup(s,n)
+	char * s
+	size_t n
+CODE:
+	RETVAL = 	ne_strndup(s,n);
+OUTPUT:
+	RETVAL
+
+
+char *
 uri_absolute(uri,scheme,hostport)
-	const char * uri
-	const char * scheme
-	const char * hostport
+	char * uri
+	char * scheme
+	char * hostport
 
 
 const char *
 uri_abspath(uri)
-	const char * uri
+	char * uri
 
 
 char *
 uri_abspath_escape(abs_path)
-	const char * abs_path
+	char * abs_path
 
 
 int
 uri_childof(parent,child)
-	const char * parent
-	const char * child
+	char * parent
+	char * child
 
 
 int
 uri_compare(a,b)
-	const char * a
-	const char * b
+	char * a
+	char * b
 
 
 void
@@ -3434,24 +3432,204 @@ uri_free(parsed)
 
 int
 uri_has_trailing_slash(uri)
-	const char * uri
+	char * uri
 
 
 char *
 uri_parent(path)
-	const char * path
+	char * path
 
 
 int
 uri_parse(uri,parsed,defaults)
-	const char * uri
+	char * uri
 	struct uri * parsed
-	const struct uri * defaults
+	struct uri * defaults
 
 
 char *
 uri_unescape(uri)
-	const char * uri
+	char * uri
+
+
+char *
+utf8_decode(str)
+	char * str
+CODE:
+	RETVAL = 	ne_utf8_decode(str);
+OUTPUT:
+	RETVAL
+
+
+char *
+utf8_encode(str)
+	char * str
+CODE:
+	RETVAL = 	ne_utf8_encode(str);
+OUTPUT:
+	RETVAL
+
+
+int
+version_minimum(major,minor)
+	int major
+	int minor
+CODE:
+	RETVAL = 	ne_version_minimum(major,minor);
+OUTPUT:
+	RETVAL
+
+
+const char *
+version_string()
+CODE:
+	RETVAL = 	ne_version_string();
+OUTPUT:
+	RETVAL
+
+
+ne_xml_parser *
+xml_create()
+CODE:
+	RETVAL = 	ne_xml_create();
+OUTPUT:
+	RETVAL
+
+
+void
+xml_parse_v(userdata,block,len)
+	void * userdata
+	char * block
+	size_t len
+CODE:
+	ne_xml_parse_v(userdata,block,len);
+
+MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::XML
+
+
+int
+currentline(p)
+	ne_xml_parser * p
+CODE:
+	RETVAL = 	ne_xml_currentline(p);
+OUTPUT:
+	RETVAL
+
+
+void
+destroy(p)
+	ne_xml_parser * p
+CODE:
+	ne_xml_destroy(p);
+
+
+const char *
+get_error(p)
+	ne_xml_parser * p
+CODE:
+	RETVAL = 	ne_xml_get_error(p);
+OUTPUT:
+	RETVAL
+
+
+ne_207_parser *
+ne_207_create(parser)
+	ne_xml_parser * parser
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+	RETVAL = 	ne_207_create(parser,pObject);
+OUTPUT:
+	RETVAL
+
+
+void
+parse(p,block,len)
+	ne_xml_parser * p
+	char * block
+	size_t len
+CODE:
+	ne_xml_parse(p,block,len);
+
+
+void
+push_handler(p,elements,validate_cb,startelm_cb,endelm_cb)
+	ne_xml_parser * p
+	struct ne_xml_elm * elements
+	ne_xml_validate_cb validate_cb
+	CV * startelm_cb
+	CV * endelm_cb
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (startelm_cb)
+                {
+                SvREFCNT_inc ((SV *)startelm_cb) ;
+                hv_store (pObjHV, "__cb__28", 8, (SV *)startelm_cb, 0) ; 
+                }
+
+            if (endelm_cb)
+                {
+                SvREFCNT_inc ((SV *)endelm_cb) ;
+                hv_store (pObjHV, "__cb__29", 8, (SV *)endelm_cb, 0) ; 
+                }
+	ne_xml_push_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__28:NULL,endelm_cb?&neon_cb___cb__29:NULL,pObject);
+
+
+void
+push_mixed_handler(p,elements,validate_cb,startelm_cb,cdata_cb,endelm_cb)
+	ne_xml_parser * p
+	struct ne_xml_elm * elements
+	ne_xml_validate_cb validate_cb
+	CV * startelm_cb
+	CV * cdata_cb
+	CV * endelm_cb
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (startelm_cb)
+                {
+                SvREFCNT_inc ((SV *)startelm_cb) ;
+                hv_store (pObjHV, "__cb__30", 8, (SV *)startelm_cb, 0) ; 
+                }
+
+            if (cdata_cb)
+                {
+                SvREFCNT_inc ((SV *)cdata_cb) ;
+                hv_store (pObjHV, "__cb__31", 8, (SV *)cdata_cb, 0) ; 
+                }
+
+            if (endelm_cb)
+                {
+                SvREFCNT_inc ((SV *)endelm_cb) ;
+                hv_store (pObjHV, "__cb__32", 8, (SV *)endelm_cb, 0) ; 
+                }
+	ne_xml_push_mixed_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__30:NULL,cdata_cb?&neon_cb___cb__31:NULL,endelm_cb?&neon_cb___cb__32:NULL,pObject);
+
+
+void
+set_error(p,msg)
+	ne_xml_parser * p
+	char * msg
+CODE:
+	ne_xml_set_error(p,msg);
+
+
+int
+valid(p)
+	ne_xml_parser * p
+CODE:
+	RETVAL = 	ne_xml_valid(p);
+OUTPUT:
+	RETVAL
 
 
 BOOT:

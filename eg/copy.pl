@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: copy.pl,v 1.3 2001/06/01 10:36:07 richter Exp $
+# $Id: copy.pl,v 1.4 2001/06/05 09:22:37 richter Exp $
 #
 ############################################################################
 
@@ -42,7 +42,7 @@ $sess = HTTP::Webdav -> new ;
 $sess -> server ("www.gr.ecos.de", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
-$sess -> dav_copy (1, "/dav/foo.htm", "/dav/bar.htm") ;
+$sess -> copy (1, "/dav/foo.htm", "/dav/bar.htm") ;
 
 print "Status: ", $sess -> get_error , "\n" ;
 

@@ -1,78 +1,138 @@
 TYPEMAP
+ne_status * ne_status__
 const unsigned char T_PV
+ne_content_range * ne_content_range__
 CV * T_CVREF2
-dav_proppatch_operation * dav_proppatch_operation__
-http_content_type * http_content_type__
-dav_propname * dav_propname__
-const http_content_type * http_content_type__
+const ne_proppatch_operation * ne_proppatch_operation__
+const ne_propname * ne_propname__
+const ne_status * ne_status__
+const ne_content_range * ne_content_range__
 nssl_certificate * nssl_certificate__
-const dav_proppatch_operation * dav_proppatch_operation__
-http_status * http_status__
-const dav_propname * dav_propname__
+const dav_proppatch_operation * 
+const dav_propname * 
 off_t T_IV
 const char * T_PV
-http_content_range * http_content_range__
 char ** T_mallocstr
 const nssl_certificate * nssl_certificate__
-const http_status * http_status__
 enum T_ENUM
-const http_content_range * http_content_range__
+ne_content_type * ne_content_type__
 xxxxx T_PTRNULL
 unsigned short int T_IV
-hip_xml_startelm_cb T_CVREF2
+ne_proppatch_operation * ne_proppatch_operation__
+ne_propname * ne_propname__
+const ne_content_type * ne_content_type__
+ne_use_proxy T_CVREF2
+ne_session * ne_session__
+const ne_session * ne_session__
 struct in_addr * T_PTRNULL
+const struct in_addr * T_PTRNULL
+void * T_PTRNULL
 const void * T_PTRNULL
-const struct hip_xml_elm * T_PTRNULL
-http_free_hooks T_CVREF2
 sock_progress T_CVREF2
-http_provide_body T_CVREF2
-const struct uri * T_PTRNULL
-hip_xml_parser * hip_xml_parser__
-http_server_capabilities * T_PTRNULL
-dav_props_create_complex T_PTRNULL
-http_request_auth T_CVREF2
-dav_207_start_propstat T_PTRNULL
-const struct ne_md5_ctx * const_struct_ne_md__ctx__
-dav_lock_walkfunc T_CVREF2
-http_redirect_confirm T_CVREF2
-http_redirect_notify T_CVREF2
-dav_props_result T_CVREF2
-http_use_proxy T_CVREF2
-nssl_accept T_CVREF2
-hip_xml_cdata_cb T_CVREF2
-http_req * http_req__
-const dav_prop_result_set * const_dav_prop_result_set__
-const http_request_hooks * T_PTRNULL
-http_block_reader T_CVREF2
-dav_propfind_handler * dav_propfind_handler__
-dav_207_end_propstat T_CVREF2
-hip_xml_endelm_cb T_CVREF2
-time_t * T_PTRNULL
-sbuffer T_PTRNULL
-nssl_context * nssl_context__
-dav_207_start_response T_PTRNULL
-dav_lock_session * dav_lock_session__
-void T_PTRNULL
-struct dav_lock * struct_dav_lock__
-struct ne_md5_ctx * struct_ne_md__ctx__
-const struct dav_lock * const_struct_dav_lock__
-http_notify_status T_CVREF2
-http_accept_response T_CVREF2
-hip_xml_validate_cb T_PTRNULL
+ne_request * ne_request__
+const ne_request * ne_request__
+ne_207_start_response T_PTRNULL
+const ne_207_start_response T_PTRNULL
 struct uri * T_PTRNULL
+const struct uri * T_PTRNULL
+ne_lock_session * ne_lock_session__
+const ne_lock_session * ne_lock_session__
+time_t * T_PTRNULL
+const time_t * T_PTRNULL
+ne_request_auth T_CVREF2
+ne_prop_result_set * ne_prop_result_set__
+const ne_prop_result_set * ne_prop_result_set__
+nssl_context * nssl_context__
+const nssl_context * nssl_context__
+ne_request_hooks * T_PTRNULL
+const ne_request_hooks * T_PTRNULL
+ne_props_create_complex T_PTRNULL
+const ne_props_create_complex T_PTRNULL
+ne_xml_validate_cb T_PTRNULL
+const ne_xml_validate_cb T_PTRNULL
+ne_redirect_confirm T_CVREF2
+struct ne_lock * struct_ne_lock__
+const struct ne_lock * struct_ne_lock__
+void T_PTRNULL
+const void T_PTRNULL
+ne_207_start_propstat T_PTRNULL
+const ne_207_start_propstat T_PTRNULL
+struct ne_md5_ctx * struct_ne_md__ctx__
+const struct ne_md5_ctx * struct_ne_md__ctx__
+ne_lock_walkfunc T_CVREF2
+ne_header_handler T_CVREF2
+ne_lock_result T_CVREF2
+ne_server_capabilities * T_PTRNULL
+const ne_server_capabilities * T_PTRNULL
+ne_207_parser * ne_____parser__
+const ne_207_parser * ne_____parser__
 nsocket * nsocket__
-dav_lock_result T_CVREF2
-http_header_handler T_CVREF2
+const nsocket * nsocket__
+ne_xml_cdata_cb T_CVREF2
+ne_props_result T_CVREF2
+ne_propset_iterator T_CVREF2
 nssl_key_prompt T_CVREF2
-dav_207_parser * dav_____parser__
 sock_block_reader T_CVREF2
-http_session * http_session__
-dav_propset_iterator T_CVREF2
-dav_207_end_response T_CVREF2
+ne_notify_status T_CVREF2
+ne_207_end_response T_CVREF2
+nssl_accept T_CVREF2
+ne_block_reader T_CVREF2
+ne_accept_response T_CVREF2
+ne_xml_startelm_cb T_CVREF2
+struct ne_xml_elm * T_PTRNULL
+const struct ne_xml_elm * T_PTRNULL
+ne_buffer * ne_buffer__
+const ne_buffer * ne_buffer__
+ne_free_hooks T_CVREF2
+ne_provide_body T_CVREF2
+ne_xml_parser * ne_xml_parser__
+const ne_xml_parser * ne_xml_parser__
+ne_propfind_handler * ne_propfind_handler__
+const ne_propfind_handler * ne_propfind_handler__
+ne_xml_endelm_cb T_CVREF2
+ne_redirect_notify T_CVREF2
+ne_207_end_propstat T_CVREF2
 
 
 
 INPUT
+ne_session__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+ne_content_range__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->start = (off_t)SvIV(__fetchmember(_pHV_,\"start\"))	;
+	(($type)$var)->end = (off_t)SvIV(__fetchmember(_pHV_,\"end\"))	;
+	(($type)$var)->total = (off_t)SvIV(__fetchmember(_pHV_,\"total\"))	;
+
+            }
+        else
+            {
+            $var = NULL ;
+            }
+        }
+
 T_CVREF2
 
 	if (SvROK ($arg))
@@ -80,84 +140,7 @@ T_CVREF2
 	else
 	    $var = NULL ;  /* croak(\"$var is not a reference to a sub\") */
         
-http_content_type__
-
-        {
-        HV * _pHV_ ;
-        if (SvOK($arg))
-            {
-            SV * p ;
-            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
-	        croak(\"$var must be a hash reference\") ;
-
-            p = newSVpv (\"\", sizeof (\*$var)) ;
-            sv_2mortal (p) ;
-            $var = ($type *)SvPVX (p) ;
-	$var->type = (const char *)SvPV(__fetchmember(_pHV_,\"type\"),PL_na)	;
-	$var->subtype = (const char *)SvPV(__fetchmember(_pHV_,\"subtype\"),PL_na)	;
-	$var->charset = (const char *)SvPV(__fetchmember(_pHV_,\"charset\"),PL_na)	;
-	$var->value = (char *)SvPV(__fetchmember(_pHV_,\"value\"),PL_na)	;
-
-            }
-        else
-            {
-            $var = NULL ;
-            }
-        }
-
-hip_xml_parser__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Hip\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-nssl_certificate__
-
-        {
-        HV * _pHV_ ;
-        if (SvOK($arg))
-            {
-            SV * p ;
-            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
-	        croak(\"$var must be a hash reference\") ;
-
-            p = newSVpv (\"\", sizeof (\*$var)) ;
-            sv_2mortal (p) ;
-            $var = ($type *)SvPVX (p) ;
-	$var->owner = (char *)SvPV(__fetchmember(_pHV_,\"owner\"),PL_na)	;
-	$var->issuer = (char *)SvPV(__fetchmember(_pHV_,\"issuer\"),PL_na)	;
-	$var->valid_from = (char *)SvPV(__fetchmember(_pHV_,\"valid_from\"),PL_na)	;
-	$var->valid_till = (char *)SvPV(__fetchmember(_pHV_,\"valid_till\"),PL_na)	;
-	$var->fingerprint = (char *)SvPV(__fetchmember(_pHV_,\"fingerprint\"),PL_na)	;
-
-            }
-        else
-            {
-            $var = NULL ;
-            }
-        }
-
-const_struct_ne_md__ctx__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-dav_propname__
+ne_propname__
 
         {
         AV * _pAV_ ;
@@ -190,8 +173,8 @@ dav_propname__
                 if (!SvOK(*ppArg) || !SvROK (*ppArg) || SvTYPE(_pHV_ = (HV *)SvRV(*ppArg)) != SVt_PVHV)
 	            croak(\"$var must be an array of hash reference\") ;
 
-	$var->nspace = (const char *)SvPV(__fetchmember(_pHV_,\"nspace\"),PL_na)	;
-	$var->name = (const char *)SvPV(__fetchmember(_pHV_,\"name\"),PL_na)	;
+	(($type)$var)->nspace = (char *)SvPV(__fetchmember(_pHV_,\"nspace\"),PL_na)	;
+	(($type)$var)->name = (char *)SvPV(__fetchmember(_pHV_,\"name\"),PL_na)	;
 
                 $var++ ;
                 }
@@ -204,85 +187,7 @@ dav_propname__
             }
         }
 
-http_content_range__
-
-        {
-        HV * _pHV_ ;
-        if (SvOK($arg))
-            {
-            SV * p ;
-            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
-	        croak(\"$var must be a hash reference\") ;
-
-            p = newSVpv (\"\", sizeof (\*$var)) ;
-            sv_2mortal (p) ;
-            $var = ($type *)SvPVX (p) ;
-	$var->start = (off_t)SvIV(__fetchmember(_pHV_,\"start\"))	;
-	$var->end = (off_t)SvIV(__fetchmember(_pHV_,\"end\"))	;
-	$var->total = (off_t)SvIV(__fetchmember(_pHV_,\"total\"))	;
-
-            }
-        else
-            {
-            $var = NULL ;
-            }
-        }
-
-http_req__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Request\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-const_dav_prop_result_set__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Propset\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-T_ENUM
-	$var = (int)SvIV($arg)
-dav_propfind_handler__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Propfind\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-nssl_context__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::SSL\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-dav_lock_session__
+ne_lock_session__
 
         {
         SV ** ppObj = NULL ;
@@ -295,79 +200,59 @@ dav_lock_session__
         $var = ($type)SvIV (*ppObj) ;
         }
 
-T_mallocstr
+ne_prop_result_set__
 
-        if (SvROK ($arg))
-	    {
-            char * s ;
-            IV     l ;
-            s = SVpv (SvRV($arg), l) ;
-            \*$var = malloc (l + 1) ;
-            strcpy (\*$var, s) ;
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Propset\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+struct_ne_lock__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Lock\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+nssl_certificate__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->owner = (char *)SvPV(__fetchmember(_pHV_,\"owner\"),PL_na)	;
+	(($type)$var)->issuer = (char *)SvPV(__fetchmember(_pHV_,\"issuer\"),PL_na)	;
+	(($type)$var)->valid_from = (char *)SvPV(__fetchmember(_pHV_,\"valid_from\"),PL_na)	;
+	(($type)$var)->valid_till = (char *)SvPV(__fetchmember(_pHV_,\"valid_till\"),PL_na)	;
+	(($type)$var)->fingerprint = (char *)SvPV(__fetchmember(_pHV_,\"fingerprint\"),PL_na)	;
+
             }
-	else
-	    croak(\"$var is not a reference to a sub\")
-        
-struct_dav_lock__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Lock\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-struct_ne_md__ctx__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-T_PTRNULL
-
-        if (SvIOK ($arg))
-            $var = ($type)SvIV($arg) ;
         else
+            {
             $var = NULL ;
-        
-const_struct_dav_lock__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Lock\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
+            }
         }
 
-nsocket__
-
-        {
-        SV ** ppObj = NULL ;
-        if (pPerl2C)
-            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Socket\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
-dav_proppatch_operation__
+ne_proppatch_operation__
 
         {
         AV * _pAV_ ;
@@ -408,7 +293,7 @@ dav_proppatch_operation__
             int  i ;
             SV * p ;
             SV * pa ;
-            const dav_propname * tmp ;
+            ne_propname * tmp ;
             if (!SvROK (__fetchmember(_pHV_,\"name\")) || SvTYPE(_pAV_ = (AV *)SvRV(__fetchmember(_pHV_,\"name\"))) != SVt_PVAV)
 	        {
                 _pAV_ = newAV () ;
@@ -417,9 +302,9 @@ dav_proppatch_operation__
                 av_push (_pAV_, __fetchmember(_pHV_,\"name\")) ;
                 }
 
-            pa = newSVpv (\"\", sizeof (*$var->name) * (av_len (_pAV_) + 2)) ;
+            pa = newSVpv (\"\", sizeof (*(($type)$var)->name) * (av_len (_pAV_) + 2)) ;
             sv_2mortal (pa) ;
-            tmp = $var->name = (const dav_propname *)SvPVX (pa) ;
+            tmp = (($type)$var)->name = (ne_propname *)SvPVX (pa) ;
             for (i = 0; i <= av_len (_pAV_); i++)
                 {
                 HV * _pHV_x_ ;
@@ -430,24 +315,24 @@ dav_proppatch_operation__
                     croak (\"bad array\") ;
                 
                 if (!SvOK(*ppArg) || !SvROK (*ppArg) || SvTYPE(_pHV_x_ = (HV *)SvRV(*ppArg)) != SVt_PVHV)
-	            croak(\"$var->name must be an array of hash reference\") ;
+	            croak(\"(($type)$var)->name must be an array of hash reference\") ;
 
-	$var->name->nspace = (const char *)SvPV(__fetchmember(_pHV_x_,\"nspace\"),PL_na)	;
-	$var->name->name = (const char *)SvPV(__fetchmember(_pHV_x_,\"name\"),PL_na)	;
+	((ne_propname *)(($type)$var)->name)->nspace = (char *)SvPV(__fetchmember(_pHV_x_,\"nspace\"),PL_na)	;
+	((ne_propname *)(($type)$var)->name)->name = (char *)SvPV(__fetchmember(_pHV_x_,\"name\"),PL_na)	;
 
-                $var->name++ ;
+                (($type)$var)->name++ ;
                 }
-            memset ((void *)$var->name, 0, sizeof (*$var->name)) ;
-            $var->name = tmp ;
+            memset ((void *)(($type)$var)->name, 0, sizeof (*(($type)$var)->name)) ;
+            (($type)$var)->name = tmp ;
             }
         else
             {
-            $var->name = NULL ;
+            (($type)$var)->name = NULL ;
             }
         }
 	;
-	$var->type = (int)SvIV(__fetchmember(_pHV_,\"type\"))	;
-	$var->value = (const char *)SvPV(__fetchmember(_pHV_,\"value\"),PL_na)	;
+	(($type)$var)->type = (int)SvIV(__fetchmember(_pHV_,\"type\"))	;
+	(($type)$var)->value = (char *)SvPV(__fetchmember(_pHV_,\"value\"),PL_na)	;
 
                 $var++ ;
                 }
@@ -460,7 +345,33 @@ dav_proppatch_operation__
             }
         }
 
-dav_____parser__
+ne_status__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->major_version = (int)SvIV(__fetchmember(_pHV_,\"major_version\"))	;
+	(($type)$var)->minor_version = (int)SvIV(__fetchmember(_pHV_,\"minor_version\"))	;
+	(($type)$var)->code = (int)SvIV(__fetchmember(_pHV_,\"code\"))	;
+	(($type)$var)->klass = (int)SvIV(__fetchmember(_pHV_,\"klass\"))	;
+	(($type)$var)->reason_phrase = (char *)SvPV(__fetchmember(_pHV_,\"reason_phrase\"),PL_na)	;
+
+            }
+        else
+            {
+            $var = NULL ;
+            }
+        }
+
+ne_____parser__
 
         {
         SV ** ppObj = NULL ;
@@ -473,7 +384,94 @@ dav_____parser__
         $var = ($type)SvIV (*ppObj) ;
         }
 
-http_status__
+T_ENUM
+	$var = (int)SvIV($arg)
+ne_buffer__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Buffer\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+ne_request__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Request\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+nssl_context__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::SSL\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+T_mallocstr
+
+        if (SvROK ($arg))
+	    {
+            char * s ;
+            IV     l ;
+            s = SVpv (SvRV($arg), l) ;
+            \*$var = malloc (l + 1) ;
+            strcpy (\*$var, s) ;
+            }
+	else
+	    croak(\"$var is not a reference to a sub\")
+        
+struct_ne_md__ctx__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+T_PTRNULL
+
+        if (SvIOK ($arg))
+            $var = ($type)SvIV($arg) ;
+        else
+            $var = NULL ;
+        
+nsocket__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Socket\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+ne_content_type__
 
         {
         HV * _pHV_ ;
@@ -485,12 +483,11 @@ http_status__
 
             p = newSVpv (\"\", sizeof (\*$var)) ;
             sv_2mortal (p) ;
-            $var = ($type *)SvPVX (p) ;
-	$var->major_version = (int)SvIV(__fetchmember(_pHV_,\"major_version\"))	;
-	$var->minor_version = (int)SvIV(__fetchmember(_pHV_,\"minor_version\"))	;
-	$var->code = (int)SvIV(__fetchmember(_pHV_,\"code\"))	;
-	$var->klass = (int)SvIV(__fetchmember(_pHV_,\"klass\"))	;
-	$var->reason_phrase = (const char *)SvPV(__fetchmember(_pHV_,\"reason_phrase\"),PL_na)	;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->type = (char *)SvPV(__fetchmember(_pHV_,\"type\"),PL_na)	;
+	(($type)$var)->subtype = (char *)SvPV(__fetchmember(_pHV_,\"subtype\"),PL_na)	;
+	(($type)$var)->charset = (char *)SvPV(__fetchmember(_pHV_,\"charset\"),PL_na)	;
+	(($type)$var)->value = (char *)SvPV(__fetchmember(_pHV_,\"value\"),PL_na)	;
 
             }
         else
@@ -499,7 +496,7 @@ http_status__
             }
         }
 
-http_session__
+ne_xml_parser__
 
         {
         SV ** ppObj = NULL ;
@@ -507,7 +504,20 @@ http_session__
             ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
 
         if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav\") ;
+            croak (\"\$var is not of type HTTP::Webdav::XML\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
+ne_propfind_handler__
+
+        {
+        SV ** ppObj = NULL ;
+        if (pPerl2C)
+            ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::Propfind\") ;
 
         $var = ($type)SvIV (*ppObj) ;
         }
@@ -516,9 +526,22 @@ http_session__
 
 
 OUTPUT
-T_CVREF2
-;
-http_content_type__
+ne_session__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
+ne_content_range__
 
         {
         HV * _pHV_ ;
@@ -533,18 +556,42 @@ http_content_type__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"type\"), $var->type);
+	sv_setiv(__fetchmember(_pHV_,\"start\"), (IV)(($type)$var)->start);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"subtype\"), $var->subtype);
+	sv_setiv(__fetchmember(_pHV_,\"end\"), (IV)(($type)$var)->end);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"charset\"), $var->charset);
-	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), $var->value);
+	sv_setiv(__fetchmember(_pHV_,\"total\"), (IV)(($type)$var)->total);
 	;
 
         }
 
-hip_xml_parser__
+T_CVREF2
+;
+ne_propname__
+
+        {
+        HV * _pHV_ ;
+
+        /* croak (\"$var unsupported\") ; */
+        if (!SvOK($arg))
+            {
+            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal ($arg) ;
+            }
+        else if (!SvROK ($arg))
+            {
+            croak (\"$var must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"nspace\"), (($type)$var)->nspace);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"name\"), (($type)$var)->name);
+	;
+
+        }
+
+ne_lock_session__
 
         {
         SV ** ppArg ;
@@ -553,7 +600,37 @@ hip_xml_parser__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Hip\", 0)) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::LockSession\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
+ne_prop_result_set__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propset\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
+struct_ne_lock__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Lock\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;
@@ -574,35 +651,20 @@ nssl_certificate__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"owner\"), $var->owner);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"owner\"), (($type)$var)->owner);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"issuer\"), $var->issuer);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"issuer\"), (($type)$var)->issuer);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"valid_from\"), $var->valid_from);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"valid_from\"), (($type)$var)->valid_from);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"valid_till\"), $var->valid_till);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"valid_till\"), (($type)$var)->valid_till);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"fingerprint\"), $var->fingerprint);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"fingerprint\"), (($type)$var)->fingerprint);
 	;
 
         }
 
-const_struct_ne_md__ctx__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MD5\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-dav_propname__
+ne_proppatch_operation__
 
         {
         HV * _pHV_ ;
@@ -619,14 +681,36 @@ dav_propname__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"nspace\"), $var->nspace);
+
+        {
+        HV * _pHV_x_ ;
+
+        /* croak (\"(($type)$var)->name unsupported\") ; */
+        if (!SvOK(__fetchmember(_pHV_,\"name\")))
+            {
+            __fetchmember(_pHV_,\"name\") = newRV_noinc((SV *)(_pHV_x_ = newHV())) ;
+            sv_2mortal (__fetchmember(_pHV_,\"name\")) ;
+            }
+        else if (!SvROK (__fetchmember(_pHV_,\"name\")))
+            {
+            croak (\"(($type)$var)->name must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_x_ = (HV *)SvRV(__fetchmember(_pHV_,\"name\"))) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_x_, SVt_PVHV) ;
+	sv_setpv((SV*)__fetchmember(_pHV_x_,\"nspace\"), ((ne_propname *)(($type)$var)->name)->nspace);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"name\"), $var->name);
+	sv_setpv((SV*)__fetchmember(_pHV_x_,\"name\"), ((ne_propname *)(($type)$var)->name)->name);
+	;
+
+        }
+	;
+	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)(($type)$var)->type);	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), (($type)$var)->value);
 	;
 
         }
 
-http_content_range__
+ne_status__
 
         {
         HV * _pHV_ ;
@@ -641,16 +725,52 @@ http_content_range__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,\"start\"), (IV)$var->start);
+	sv_setiv(__fetchmember(_pHV_,\"major_version\"), (IV)(($type)$var)->major_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,\"end\"), (IV)$var->end);
+	sv_setiv(__fetchmember(_pHV_,\"minor_version\"), (IV)(($type)$var)->minor_version);
 	;
-	sv_setiv(__fetchmember(_pHV_,\"total\"), (IV)$var->total);
+	sv_setiv(__fetchmember(_pHV_,\"code\"), (IV)(($type)$var)->code);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"klass\"), (IV)(($type)$var)->klass);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"reason_phrase\"), (($type)$var)->reason_phrase);
 	;
 
         }
 
-http_req__
+ne_____parser__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MultiStatus\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
+T_ENUM
+	sv_setiv($arg, (IV)$var);
+ne_buffer__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Buffer\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
+ne_request__
 
         {
         SV ** ppArg ;
@@ -660,38 +780,6 @@ http_req__
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Request\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-const_dav_prop_result_set__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propset\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-T_ENUM
-	sv_setiv($arg, (IV)$var);
-dav_propfind_handler__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propfind\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;
@@ -707,36 +795,6 @@ nssl_context__
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::SSL\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-dav_lock_session__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::LockSession\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-struct_dav_lock__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Lock\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;
@@ -759,21 +817,6 @@ struct_ne_md__ctx__
 
 T_PTRNULL
 sv_setiv($arg, (IV)$var);
-const_struct_dav_lock__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Lock\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
 nsocket__
 
         {
@@ -789,12 +832,10 @@ nsocket__
         $arg = *ppArg ;
         }
 
-dav_proppatch_operation__
+ne_content_type__
 
         {
         HV * _pHV_ ;
-
-        /* croak (\"$var unsupported\") ; */
         if (!SvOK($arg))
             {
             $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
@@ -806,36 +847,18 @@ dav_proppatch_operation__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-
-        {
-        HV * _pHV_x_ ;
-
-        /* croak (\"$var->name unsupported\") ; */
-        if (!SvOK(__fetchmember(_pHV_,\"name\")))
-            {
-            __fetchmember(_pHV_,\"name\") = newRV_noinc((SV *)(_pHV_x_ = newHV())) ;
-            sv_2mortal (__fetchmember(_pHV_,\"name\")) ;
-            }
-        else if (!SvROK (__fetchmember(_pHV_,\"name\")))
-            {
-            croak (\"$var->name must be a reference\") ;
-            }
-        else if (SvTYPE(_pHV_x_ = (HV *)SvRV(__fetchmember(_pHV_,\"name\"))) != SVt_PVHV)
-	    SvUPGRADE ((SV *)_pHV_x_, SVt_PVHV) ;
-	sv_setpv((SV*)__fetchmember(_pHV_x_,\"nspace\"), $var->name->nspace);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"type\"), (($type)$var)->type);
 	;
-	sv_setpv((SV*)__fetchmember(_pHV_x_,\"name\"), $var->name->name);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"subtype\"), (($type)$var)->subtype);
 	;
-
-        }
+	sv_setpv((SV*)__fetchmember(_pHV_,\"charset\"), (($type)$var)->charset);
 	;
-	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)$var->type);	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), $var->value);
+	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), (($type)$var)->value);
 	;
 
         }
 
-dav_____parser__
+ne_xml_parser__
 
         {
         SV ** ppArg ;
@@ -844,41 +867,13 @@ dav_____parser__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MultiStatus\", 0)) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::XML\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;
         }
 
-http_status__
-
-        {
-        HV * _pHV_ ;
-        if (!SvOK($arg))
-            {
-            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
-            sv_2mortal ($arg) ;
-            }
-        else if (!SvROK ($arg))
-            {
-            croak (\"$var must be a reference\") ;
-            }
-        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
-	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
-	sv_setiv(__fetchmember(_pHV_,\"major_version\"), (IV)$var->major_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,\"minor_version\"), (IV)$var->minor_version);
-	;
-	sv_setiv(__fetchmember(_pHV_,\"code\"), (IV)$var->code);
-	;
-	sv_setiv(__fetchmember(_pHV_,\"klass\"), (IV)$var->klass);
-	;
-	sv_setpv((SV*)__fetchmember(_pHV_,\"reason_phrase\"), $var->reason_phrase);
-	;
-
-        }
-
-http_session__
+ne_propfind_handler__
 
         {
         SV ** ppArg ;
@@ -887,7 +882,7 @@ http_session__
             {
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav\", 0)) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Propfind\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;

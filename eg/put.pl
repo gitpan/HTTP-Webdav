@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: put.pl,v 1.5 2001/06/01 10:36:07 richter Exp $
+# $Id: put.pl,v 1.6 2001/06/05 09:22:37 richter Exp $
 #
 ############################################################################
 
@@ -36,11 +36,11 @@ sub auth
 
 $sess = HTTP::Webdav -> new ;
 
-$sess -> server ("localhost", 80) ;
+$sess -> server ("localhost", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
 # instead of STDIN you can use any open Perl filehandle
-$sess -> put ("/dav/foo.htm", STDIN) ;
+$sess -> put ("/dav/bar.htm", STDIN) ;
 
 print "Status: ", $sess -> get_error , "\n" ;
 

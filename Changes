@@ -1,0 +1,18 @@
+
+
+0.1.10
+
+    - Works now with neon 0.15.0
+    - Function and namespace renames due to renames in neon
+    - fixed compiler warnings
+
+0.1.9
+
+    - change PV to void * to make it work with Perl 5.6.0+.
+      Spotted by Brian Wallis.
+
+0.1.8
+
+    - rename to HTTP::Webdav to fit better into CPAN
+
+

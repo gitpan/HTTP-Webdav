@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: propfind.pl,v 1.7 2001/06/04 13:14:30 richter Exp $
+# $Id: propfind.pl,v 1.8 2001/06/05 09:22:37 richter Exp $
 #
 ############################################################################
 
@@ -61,7 +61,7 @@ $sess -> set_server_auth (\&auth) ;
 
 print "--> propfind: all properties\n\n" ;
 
-$sess -> dav_simple_propfind ("/dav", DAV_DEPTH_ONE, undef, \&callback) ;
+$sess -> simple_propfind ("/dav", NE_DEPTH_ONE, undef, \&callback) ;
 
 print "Status: ", $sess -> get_error , "\n\n" ;
 
@@ -69,14 +69,14 @@ print "Status: ", $sess -> get_error , "\n\n" ;
 
 print "--> propfind: DAV:getlastmodified\n\n" ;
 
-$sess -> dav_simple_propfind ("/dav", DAV_DEPTH_ONE, { nspace => 'DAV:', name => 'getlastmodified'}, \&callback) ;
+$sess -> simple_propfind ("/dav", NE_DEPTH_ONE, { nspace => 'DAV:', name => 'getlastmodified'}, \&callback) ;
 
 print "Status: ", $sess -> get_error , "\n\n" ;
 
 
 print "--> propfind: DAV:getlastmodified and DAV:getcontenttype\n\n" ;
 
-$sess -> dav_simple_propfind ("/dav", DAV_DEPTH_ONE, 
+$sess -> simple_propfind ("/dav", NE_DEPTH_ONE, 
                                 [
                                 { nspace => 'DAV:', name => 'getlastmodified'},
                                 { nspace => 'DAV:', name => 'getcontenttype'}
