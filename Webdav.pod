@@ -192,13 +192,9 @@ ne_session *
 
 =back
 
-=head2 $session -> add_hooks (hooks,free_cookie)
+=head2 int = $session -> acl_set (uri,entries,numentries)
 
-Add in hooks.
-'cookie' will be passed to each call to the 'create' handler of the hooks.
-If 'free_hooks' is non-NULL, it will called when the session is destroyed,
-to free any data associated with 'cookie'.
-
+Set the ACL for the given resource to the list of ACL entries. 
 
 =over 4
 
@@ -212,30 +208,27 @@ ne_session *
 
 
 
-=item hooks
+=item uri
 
-const ne_request_hooks *
-
-
+<string>
 
 
+=item entries
 
-=item Callback function: free_cookie
-
-free_cookie (cookie)
+ne_acl_entry *
 
 
 
 
-=over 4
-
-=item cookie
-
-void *
+entries = {
+apply => enum, type => enum, principal => <string>, read => <integer>, read_acl => <integer>, write => <integer>, write_acl => <integer>, read_cuprivset => <integer>, };
 
 
 
-=back
+=item numentries
+
+<integer>
+
 
 
 
@@ -258,6 +251,41 @@ session.
 =item $session
 
 ne_session *
+
+
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> cookie_register (cache)
+
+Register cookie handling for given session using given cache. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+=item cache
+
+ne_cookie_cache *
+
+
+
+
+cache = {
+cookies => ne_cookie *, };
 
 
 
@@ -614,9 +642,246 @@ time_t *
 
 =back
 
+=head2 $session -> hook_create_request (fn)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=item Callback function: fn
+
+fn (userdata,$request,method,uri)
+
+Hook called when a create is created. 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item req
+
+ne_request *
+
+=item method
+
+<string>
+
+=item uri
+
+<string>
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> hook_destroy_request (fn)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=item Callback function: fn
+
+fn (userdata)
+
+Hook called when the function is destroyed. 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> hook_destroy_session (fn)
+
+Hook called when the session is destroyed. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=item Callback function: fn
+
+fn (userdata)
+
+Hook called when the function is destroyed. 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> hook_post_send (fn)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=item Callback function: fn
+
+int = fn (userdata,status)
+
+Hook called after the request is sent. May return:
+NE_OK     everything is okay
+NE_RETRY  try sending the request again.
+anything else signifies an error, and the request is failed. The return
+code is passed back the _dispatch caller, so the session error must
+also be set appropriately (ne_set_error).
+
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item status
+
+const ne_status *
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> hook_pre_send (fn)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+
+
+=item Callback function: fn
+
+fn (userdata,$buffer)
+
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item header
+
+ne_buffer *
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
 =head2 void * = $session -> hook_private (id)
 
-Return private data for the session 
 
 =over 4
 
@@ -633,6 +898,45 @@ ne_session *
 =item id
 
 <string>
+
+
+
+
+=back
+
+
+=back
+
+=head2 $session -> hook_session_accessor (id,arg2,userdata)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+=item id
+
+<string>
+
+
+=item arg2
+
+ne_accessor_fn
+
+Hook used to allow external access into hook processing. 
+
+
+=item userdata
+
+void *
 
 
 
@@ -2139,6 +2443,8 @@ Destroys (deallocates) a buffer
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 
@@ -2161,6 +2467,8 @@ ne_buffer *
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 
@@ -2186,6 +2494,8 @@ either way. Returns 0 on success, non-zero on error.
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 =item data
@@ -2220,6 +2530,8 @@ Empties the contents of buf; makes the buffer zero-length.
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 
@@ -2244,6 +2556,8 @@ data.
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 
@@ -2268,6 +2582,8 @@ Returns 0 on success, non-zero on error
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 =item size
@@ -2298,6 +2614,8 @@ Returns 0 on success, non-zero on error.
 
 ne_buffer *
 
+Hook called before the request is sent.  'header' is the raw HTTP
+header before the trailing CRLF is added: add in more here. 
 
 
 =item str
@@ -3640,6 +3958,93 @@ ne_request *
 
 =back
 
+=head2 ne_decompress * = $request -> decompress_reader (accpt,rdr)
+
+Call this to register a 'reader' callback which will be passed
+blocks of response body (if the 'acceptance' callback is
+successful).  If the response body is returned compressed by the
+server, this reader will receive UNCOMPRESSED blocks.
+
+Returns pointer to context object which must be passed to
+ne_decompress_destroy after the request has been dispatched, to
+free any internal state.  
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+
+
+=item Callback function: accpt
+
+int = accpt (userdata,$request,st)
+
+'acceptance' callback type. Return non-zero to accept the response,
+else zero to ignore it. 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item req
+
+ne_request *
+
+=item st
+
+ne_status *
+
+
+
+=back
+
+
+
+=item Callback function: rdr
+
+rdr (userdata,buf,len)
+
+The 'reader' callback type 
+
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item buf
+
+<string>
+
+=item len
+
+size_t
+
+
+
+=back
+
+
+
+=back
+
+
+=back
+
 =head2 int = $request -> dispatch ()
 
 ne_request_dispatch: Sends the given request, and reads the
@@ -3704,6 +4109,29 @@ ne_request *
 
 =back
 
+=head2 $session = $request -> get_session ()
+
+Returns pointer to session associated with request. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 const ne_status * = $request -> get_status ()
 
 
@@ -3728,7 +4156,6 @@ ne_request *
 
 =head2 void * = $request -> hook_private (id)
 
-Return private data for a new request  
 
 =over 4
 
@@ -3745,6 +4172,45 @@ ne_request *
 =item id
 
 <string>
+
+
+
+
+=back
+
+
+=back
+
+=head2 $request -> hook_request_accessor (id,arg2,userdata)
+
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $request
+
+ne_request *
+
+
+
+=item id
+
+<string>
+
+
+=item arg2
+
+ne_accessor_fn
+
+Hook used to allow external access into hook processing. 
+
+
+=item userdata
+
+void *
 
 
 
@@ -4745,6 +5211,13 @@ ne_request *
 
 ne_status *
 
+Hook called after the request is sent. May return:
+NE_OK     everything is okay
+NE_RETRY  try sending the request again.
+anything else signifies an error, and the request is failed. The return
+code is passed back the _dispatch caller, so the session error must
+also be set appropriately (ne_set_error).
+
 
 
 
@@ -4786,6 +5259,13 @@ ne_request *
 
 ne_status *
 
+Hook called after the request is sent. May return:
+NE_OK     everything is okay
+NE_RETRY  try sending the request again.
+anything else signifies an error, and the request is failed. The return
+code is passed back the _dispatch caller, so the session error must
+also be set appropriately (ne_set_error).
+
 
 
 
@@ -4826,6 +5306,13 @@ ne_request *
 =item st
 
 ne_status *
+
+Hook called after the request is sent. May return:
+NE_OK     everything is okay
+NE_RETRY  try sending the request again.
+anything else signifies an error, and the request is failed. The return
+code is passed back the _dispatch caller, so the session error must
+also be set appropriately (ne_set_error).
 
 
 
@@ -4972,6 +5459,30 @@ void *
 =item mask
 
 <integer>
+
+
+
+
+=back
+
+
+=back
+
+=head2 int = HTTP::Webdav::Util::decompress_destroy (ctx)
+
+Free's up internal state. Returns non-zero if errors occured during
+decompression: the session error string will have the error. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item ctx
+
+ne_decompress *
+
 
 
 
@@ -5286,6 +5797,28 @@ Initialize i18n in neon
 
 =back
 
+=head2 void * = HTTP::Webdav::Util::null_accessor (userdata)
+
+an accessor which simply returns the userdata. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item userdata
+
+void *
+
+
+
+
+=back
+
+
+=back
+
 =head2 int = HTTP::Webdav::Util::parse_statusline (status_line,s)
 
 Parser for strings which follow the Status-Line grammar from 
@@ -5309,6 +5842,13 @@ Returns:
 =item s
 
 ne_status *
+
+Hook called after the request is sent. May return:
+NE_OK     everything is okay
+NE_RETRY  try sending the request again.
+anything else signifies an error, and the request is failed. The return
+code is passed back the _dispatch caller, so the session error must
+also be set appropriately (ne_set_error).
 
 
 
@@ -6569,6 +7109,10 @@ use HTTP::Webdav::Constants ;
 
 
 
+=item NE_ACL_H
+
+
+
 =item NE_ALLOC_H
 
 
@@ -6586,6 +7130,10 @@ use HTTP::Webdav::Constants ;
 
 
 =item NE_BASIC_H
+
+
+
+=item NE_COMPRESS_H
 
 
 

@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.xs,v 1.24 2001/09/24 15:32:31 richter Exp $
+# $Id: Webdav.xs,v 1.25 2001/10/19 04:36:30 richter Exp $
 #
 ############################################################################
 */
@@ -34,6 +34,7 @@ extern "C" {
 #include "ne_auth.h"
 #include "ne_uri.h"
 #include "ne_xml.h"
+#include "ne_compress.h"
 #include "ne_socket.h"
 #include "ne_string.h"
 #include "ne_redirect.h"
@@ -41,6 +42,7 @@ extern "C" {
 #include "ne_props.h"
 #include "ne_session.h"
 #include "ne_defs.h"
+#include "ne_acl.h"
 #include "ne_utils.h"
 #include "ne_207.h"
 #include "ne_cookies.h"
@@ -62,7 +64,9 @@ extern "C" {
 }
 #endif
 
-
+#ifdef apply
+#undef apply
+#endif
 
 
 SV * __fetchmember (HV * pHV, char * pKey)
@@ -90,7 +94,7 @@ HV * pPerl2C ;
     
     /* *** ne_207_end_propstat set by ne_207_set_propstat_handlers *** */
 
-void neon_cb___cb__14 (
+void neon_cb___cb__18 (
     void *userdata, void *propstat, const char *status_line, 
     const ne_status *status, const char *description)
     {
@@ -104,7 +108,7 @@ void neon_cb___cb__14 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__14", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__18", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -161,7 +165,7 @@ void neon_cb___cb__14 (
     
     /* *** ne_207_end_response set by ne_207_set_response_handlers *** */
 
-void neon_cb___cb__15 (
+void neon_cb___cb__19 (
     void *userdata, void *response, const char *status_line,
     const ne_status *status, const char *description)
     {
@@ -175,7 +179,7 @@ void neon_cb___cb__15 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__15", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__19", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -232,7 +236,7 @@ void neon_cb___cb__15 (
     
     /* *** ne_accept_response set by ne_add_response_body_reader *** */
 
-int neon_cb___cb__19 (
+int neon_cb___cb__23 (
     void *userdata, ne_request *req, ne_status *st)
     {
 	int retval ;
@@ -246,7 +250,99 @@ int neon_cb___cb__19 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__19", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__23", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&req), sizeof(req), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Request", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)req), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
+            {
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
+            }
+        else if (!SvROK (pSV))
+            {
+            croak ("st must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (st)
+            {
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((ne_status *)st)->major_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((ne_status *)st)->minor_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((ne_status *)st)->code);
+	;
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((ne_status *)st)->klass);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((ne_status *)st)->reason_phrase);
+	;
+
+            }
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_accept_response set by ne_decompress_reader *** */
+
+int neon_cb___cb__27 (
+    void *userdata, ne_request *req, ne_status *st)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -324,7 +420,7 @@ int neon_cb___cb__19 (
     
     /* *** ne_block_reader set by ne_read_file *** */
 
-void neon_cb___cb__5 (
+void neon_cb___cb__9 (
     void *userdata, const char *buf, size_t len)
     {
 
@@ -337,7 +433,7 @@ void neon_cb___cb__5 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__5", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__9", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -361,7 +457,7 @@ void neon_cb___cb__5 (
     
     /* *** ne_block_reader set by ne_add_response_body_reader *** */
 
-void neon_cb___cb__20 (
+void neon_cb___cb__24 (
     void *userdata, const char *buf, size_t len)
     {
 
@@ -374,7 +470,7 @@ void neon_cb___cb__20 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__20", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__24", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -396,9 +492,10 @@ void neon_cb___cb__20 (
     }
 
     
-    /* *** ne_free_hooks set by ne_add_hooks *** */
+    /* *** ne_block_reader set by ne_decompress_reader *** */
 
-void neon_cb___cb__1 (void *cookie)
+void neon_cb___cb__28 (
+    void *userdata, const char *buf, size_t len)
     {
 
     int cnt ;
@@ -410,10 +507,129 @@ void neon_cb___cb__1 (void *cookie)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)cookie), "__cb__1", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
     if (ppCV && *ppCV)
         {
-	pSV = (SV *)cookie;
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, buf);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setiv(pSV, (IV)len);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_create_request_fn set by ne_hook_create_request *** */
+
+void neon_cb___cb__2 (void *userdata, ne_request *req,
+				     const char *method, const char *uri)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__2", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&req), sizeof(req), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Request", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)req), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, method);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, uri);
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_destory_fn set by ne_hook_destroy_request *** */
+
+void neon_cb___cb__3 (void *userdata)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__3", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_destory_fn set by ne_hook_destroy_session *** */
+
+void neon_cb___cb__4 (void *userdata)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__4", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
 	XPUSHs(pSV);
 
     PUTBACK ;
@@ -428,7 +644,7 @@ void neon_cb___cb__1 (void *cookie)
     
     /* *** ne_header_handler set by ne_add_response_header_catcher *** */
 
-void neon_cb___cb__21 (void *userdata, const char *value)
+void neon_cb___cb__25 (void *userdata, const char *value)
     {
 
     int cnt ;
@@ -440,7 +656,7 @@ void neon_cb___cb__21 (void *userdata, const char *value)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__21", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__25", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -461,7 +677,7 @@ void neon_cb___cb__21 (void *userdata, const char *value)
     
     /* *** ne_header_handler set by ne_add_response_header_handler *** */
 
-void neon_cb___cb__22 (void *userdata, const char *value)
+void neon_cb___cb__26 (void *userdata, const char *value)
     {
 
     int cnt ;
@@ -473,7 +689,7 @@ void neon_cb___cb__22 (void *userdata, const char *value)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__22", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__26", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -494,7 +710,7 @@ void neon_cb___cb__22 (void *userdata, const char *value)
     
     /* *** ne_lock_result set by ne_lock_discover *** */
 
-void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock, 
+void neon_cb___cb__7 (void *userdata, const struct ne_lock *lock, 
 			       const char *uri, const ne_status *status)
     {
 
@@ -507,7 +723,7 @@ void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__3", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__7", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -598,7 +814,7 @@ void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock,
     
     /* *** ne_lock_walkfunc set by ne_lock_iterate *** */
 
-void neon_cb___cb__13 (struct ne_lock *lock, void *userdata)
+void neon_cb___cb__17 (struct ne_lock *lock, void *userdata)
     {
 
     int cnt ;
@@ -610,7 +826,7 @@ void neon_cb___cb__13 (struct ne_lock *lock, void *userdata)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__13", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__17", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = sv_newmortal ();
@@ -667,7 +883,7 @@ void neon_cb___cb__13 (struct ne_lock *lock, void *userdata)
     
     /* *** ne_notify_status set by ne_set_status *** */
 
-void neon_cb___cb__11 (void *userdata, 
+void neon_cb___cb__15 (void *userdata, 
 				 ne_conn_status status,
 				 const char *info)
     {
@@ -681,7 +897,7 @@ void neon_cb___cb__11 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__11", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__15", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -702,9 +918,130 @@ void neon_cb___cb__11 (void *userdata,
     }
 
     
+    /* *** ne_post_send_fn set by ne_hook_post_send *** */
+
+int neon_cb___cb__5 (void *userdata, const ne_status *status)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__5", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
+            {
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
+            }
+        else if (!SvROK (pSV))
+            {
+            croak ("status must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (status)
+            {
+	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
+	;
+	sv_setiv(__fetchmember(_pHV_,"code"), (IV)((const ne_status *)status)->code);
+	;
+	sv_setiv(__fetchmember(_pHV_,"klass"), (IV)((const ne_status *)status)->klass);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
+	;
+
+            }
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_pre_send_fn set by ne_hook_pre_send *** */
+
+void neon_cb___cb__6 (void *userdata, ne_buffer *header)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__6", 7, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&header), sizeof(header), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Buffer", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)header), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
     /* *** ne_props_result set by ne_propnames *** */
 
-void neon_cb___cb__4 (void *userdata, const char *href,
+void neon_cb___cb__8 (void *userdata, const char *href,
 				 const ne_prop_result_set *results)
     {
 
@@ -717,7 +1054,7 @@ void neon_cb___cb__4 (void *userdata, const char *href,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__4", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__8", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -753,56 +1090,6 @@ void neon_cb___cb__4 (void *userdata, const char *href,
 
     
     /* *** ne_props_result set by ne_simple_propfind *** */
-
-void neon_cb___cb__12 (void *userdata, const char *href,
-				 const ne_prop_result_set *results)
-    {
-
-    int cnt ;
-    SV * pSV ;
-    SV ** ppCV ;
-
-    dSP ;
-    ENTER ;
-    SAVETMPS ;
-    PUSHMARK(SP) ;
-
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__12", 8, 0) ;
-    if (ppCV && *ppCV)
-        {
-	pSV = (SV *)userdata;
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-		sv_setpv((SV*)pSV, href);
-	XPUSHs(pSV);
-	pSV = sv_newmortal ();
-	
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-            sv_2mortal(*ppArg) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
-            }
-        pSV = *ppArg ;
-        }
-	XPUSHs(pSV);
-
-    PUTBACK ;
-		cnt = perl_call_sv (*ppCV, G_VOID) ;
-		}
-
-    FREETMPS ;
-    LEAVE ;
-
-    }
-
-    
-    /* *** ne_props_result set by ne_propfind_allprop *** */
 
 void neon_cb___cb__16 (void *userdata, const char *href,
 				 const ne_prop_result_set *results)
@@ -852,9 +1139,9 @@ void neon_cb___cb__16 (void *userdata, const char *href,
     }
 
     
-    /* *** ne_props_result set by ne_propfind_named *** */
+    /* *** ne_props_result set by ne_propfind_allprop *** */
 
-void neon_cb___cb__17 (void *userdata, const char *href,
+void neon_cb___cb__20 (void *userdata, const char *href,
 				 const ne_prop_result_set *results)
     {
 
@@ -867,7 +1154,57 @@ void neon_cb___cb__17 (void *userdata, const char *href,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__17", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__20", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		sv_setpv((SV*)pSV, href);
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+	
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(&results), sizeof(results), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
+	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
+            }
+        pSV = *ppArg ;
+        }
+	XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_VOID) ;
+		}
+
+    FREETMPS ;
+    LEAVE ;
+
+    }
+
+    
+    /* *** ne_props_result set by ne_propfind_named *** */
+
+void neon_cb___cb__21 (void *userdata, const char *href,
+				 const ne_prop_result_set *results)
+    {
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__21", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -904,7 +1241,7 @@ void neon_cb___cb__17 (void *userdata, const char *href,
     
     /* *** ne_propset_iterator set by ne_propset_iterate *** */
 
-int neon_cb___cb__18 (void *userdata,
+int neon_cb___cb__22 (void *userdata,
 				    const ne_propname *pname,
 				    const char *value,
 				    const ne_status *status)
@@ -920,7 +1257,7 @@ int neon_cb___cb__18 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__18", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__22", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1012,7 +1349,7 @@ int neon_cb___cb__18 (void *userdata,
     
     /* *** ne_provide_body set by ne_set_request_body_provider *** */
 
-ssize_t neon_cb___cb__23 (void *userdata, 
+ssize_t neon_cb___cb__29 (void *userdata, 
 				   char *buffer, size_t buflen)
     {
 	ssize_t retval ;
@@ -1026,7 +1363,7 @@ ssize_t neon_cb___cb__23 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__23", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__29", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1063,7 +1400,7 @@ ssize_t neon_cb___cb__23 (void *userdata,
     
     /* *** ne_redirect_confirm set by ne_redirect_register *** */
 
-int neon_cb___cb__6 (void *userdata,
+int neon_cb___cb__10 (void *userdata,
 				   const char *src, const char *dest)
     {
 	int retval ;
@@ -1077,7 +1414,7 @@ int neon_cb___cb__6 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__6", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__10", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1114,7 +1451,7 @@ int neon_cb___cb__6 (void *userdata,
     
     /* *** ne_redirect_notify set by ne_redirect_register *** */
 
-void neon_cb___cb__7 (void *userdata,
+void neon_cb___cb__11 (void *userdata,
 				   const char *src, const char *dest)
     {
 
@@ -1127,7 +1464,7 @@ void neon_cb___cb__7 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__7", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__11", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1151,7 +1488,7 @@ void neon_cb___cb__7 (void *userdata,
     
     /* *** ne_request_auth set by ne_set_proxy_auth *** */
 
-int neon_cb___cb__9 (
+int neon_cb___cb__13 (
     void *userdata, const char *realm,
     char **username, char **password)
     {
@@ -1166,7 +1503,7 @@ int neon_cb___cb__9 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__9", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__13", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1212,7 +1549,7 @@ int neon_cb___cb__9 (
     
     /* *** ne_request_auth set by ne_set_server_auth *** */
 
-int neon_cb___cb__10 (
+int neon_cb___cb__14 (
     void *userdata, const char *realm,
     char **username, char **password)
     {
@@ -1227,7 +1564,7 @@ int neon_cb___cb__10 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__10", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__14", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1273,7 +1610,7 @@ int neon_cb___cb__10 (
     
     /* *** ne_use_proxy set by ne_session_decide_proxy *** */
 
-int neon_cb___cb__2 (void *userdata,
+int neon_cb___cb__1 (void *userdata,
 			    const char *scheme, const char *hostname)
     {
 	int retval ;
@@ -1287,7 +1624,7 @@ int neon_cb___cb__2 (void *userdata,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__2", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__1", 7, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1324,7 +1661,7 @@ int neon_cb___cb__2 (void *userdata,
     
     /* *** ne_xml_cdata_cb set by ne_xml_push_mixed_handler *** */
 
-void neon_cb___cb__32 (void *userdata, const struct ne_xml_elm *s, 
+void neon_cb___cb__38 (void *userdata, const struct ne_xml_elm *s, 
      const char *cdata, int len)
     {
 
@@ -1337,7 +1674,7 @@ void neon_cb___cb__32 (void *userdata, const struct ne_xml_elm *s,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__32", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__38", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1363,7 +1700,7 @@ void neon_cb___cb__32 (void *userdata, const struct ne_xml_elm *s,
     
     /* *** ne_xml_endelm_cb set by ne_xml_push_handler *** */
 
-int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
+int neon_cb___cb__35 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
     {
 	int retval ;
 
@@ -1376,7 +1713,7 @@ int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *s, const char *cd
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__29", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__35", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1412,7 +1749,7 @@ int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *s, const char *cd
     
     /* *** ne_xml_endelm_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__33 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
+int neon_cb___cb__39 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
     {
 	int retval ;
 
@@ -1425,7 +1762,7 @@ int neon_cb___cb__33 (void *userdata, const struct ne_xml_elm *s, const char *cd
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__33", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__39", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1461,7 +1798,7 @@ int neon_cb___cb__33 (void *userdata, const struct ne_xml_elm *s, const char *cd
     
     /* *** ne_xml_startelm_cb set by ne_xml_push_handler *** */
 
-int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+int neon_cb___cb__34 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
     {
 	int retval ;
 
@@ -1474,7 +1811,7 @@ int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *elm, const char *
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__34", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1509,7 +1846,7 @@ int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *elm, const char *
     
     /* *** ne_xml_startelm_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+int neon_cb___cb__37 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
     {
 	int retval ;
 
@@ -1522,7 +1859,7 @@ int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *elm, const char *
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__37", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1557,7 +1894,7 @@ int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *elm, const char *
     
     /* *** ne_xml_validate_cb set by ne_xml_push_handler *** */
 
-int neon_cb___cb__27 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
+int neon_cb___cb__33 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     {
 	int retval ;
 
@@ -1570,7 +1907,7 @@ int neon_cb___cb__27 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__33", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1605,7 +1942,7 @@ int neon_cb___cb__27 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     
     /* *** ne_xml_validate_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__30 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
+int neon_cb___cb__36 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     {
 	int retval ;
 
@@ -1618,7 +1955,7 @@ int neon_cb___cb__30 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__36", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1653,7 +1990,7 @@ int neon_cb___cb__30 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
     
     /* *** nssl_key_prompt set by sock_set_key_prompt *** */
 
-int neon_cb___cb__24 (void *userdata, const char *filename,
+int neon_cb___cb__30 (void *userdata, const char *filename,
 			       char *buf, int buflen)
     {
 	int retval ;
@@ -1667,7 +2004,7 @@ int neon_cb___cb__24 (void *userdata, const char *filename,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__24", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1707,7 +2044,7 @@ int neon_cb___cb__24 (void *userdata, const char *filename,
     
     /* *** sock_block_reader set by sock_readfile_blocked *** */
 
-void neon_cb___cb__25 (
+void neon_cb___cb__31 (
     void *userdata, const char *buf, size_t len)
     {
 
@@ -1720,7 +2057,7 @@ void neon_cb___cb__25 (
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__25", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1744,7 +2081,7 @@ void neon_cb___cb__25 (
     
     /* *** sock_progress set by ne_set_progress *** */
 
-void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__12 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1756,7 +2093,7 @@ void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__8", 7, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__12", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1780,7 +2117,7 @@ void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
     
     /* *** sock_progress set by sock_register_progress *** */
 
-void neon_cb___cb__26 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__32 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1792,7 +2129,7 @@ void neon_cb___cb__26 (void *userdata, off_t progress, off_t total)
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__26", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__32", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1837,23 +2174,16 @@ OUTPUT:
 RETVAL
 
 
-void
-add_hooks(sess,hooks,free_cookie)
+int
+acl_set(sess,uri,entries,numentries)
 	ne_session * sess
-	ne_request_hooks * hooks
-	CV * free_cookie
-
-        PREINIT:
-            SV * pObject = ST(0) ;
-            HV * pObjHV  = (HV *)SvRV(pObject) ;
-        CODE:
-
-            if (free_cookie)
-                {
-                SvREFCNT_inc ((SV *)free_cookie) ;
-                hv_store (pObjHV, "__cb__1", 7, (SV *)free_cookie, 0) ; 
-                }
-	ne_add_hooks(sess,hooks,pObject,free_cookie?&neon_cb___cb__1:NULL);
+	char * uri
+	ne_acl_entry * entries
+	int numentries
+CODE:
+	RETVAL = 	ne_acl_set(sess,uri,entries,numentries);
+OUTPUT:
+RETVAL
 
 
 int
@@ -1863,6 +2193,14 @@ CODE:
 	RETVAL = 	ne_close_connection(sess);
 OUTPUT:
 RETVAL
+
+
+void
+cookie_register(sess,cache)
+	ne_session * sess
+	ne_cookie_cache * cache
+CODE:
+	ne_cookie_register(sess,cache);
 
 
 int
@@ -1891,9 +2229,9 @@ decide_proxy(sess,use_proxy)
             if (use_proxy)
                 {
                 SvREFCNT_inc ((SV *)use_proxy) ;
-                hv_store (pObjHV, "__cb__2", 7, (SV *)use_proxy, 0) ; 
+                hv_store (pObjHV, "__cb__1", 7, (SV *)use_proxy, 0) ; 
                 }
-	ne_session_decide_proxy(sess,use_proxy?&neon_cb___cb__2:NULL,pObject);
+	ne_session_decide_proxy(sess,use_proxy?&neon_cb___cb__1:NULL,pObject);
 
 
 int
@@ -1974,6 +2312,96 @@ OUTPUT:
 RETVAL
 
 
+void
+hook_create_request(sess,fn)
+	ne_session * sess
+	CV * fn
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (fn)
+                {
+                SvREFCNT_inc ((SV *)fn) ;
+                hv_store (pObjHV, "__cb__2", 7, (SV *)fn, 0) ; 
+                }
+	ne_hook_create_request(sess,fn?&neon_cb___cb__2:NULL,pObject);
+
+
+void
+hook_destroy_request(sess,fn)
+	ne_session * sess
+	CV * fn
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (fn)
+                {
+                SvREFCNT_inc ((SV *)fn) ;
+                hv_store (pObjHV, "__cb__3", 7, (SV *)fn, 0) ; 
+                }
+	ne_hook_destroy_request(sess,fn?&neon_cb___cb__3:NULL,pObject);
+
+
+void
+hook_destroy_session(sess,fn)
+	ne_session * sess
+	CV * fn
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (fn)
+                {
+                SvREFCNT_inc ((SV *)fn) ;
+                hv_store (pObjHV, "__cb__4", 7, (SV *)fn, 0) ; 
+                }
+	ne_hook_destroy_session(sess,fn?&neon_cb___cb__4:NULL,pObject);
+
+
+void
+hook_post_send(sess,fn)
+	ne_session * sess
+	CV * fn
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (fn)
+                {
+                SvREFCNT_inc ((SV *)fn) ;
+                hv_store (pObjHV, "__cb__5", 7, (SV *)fn, 0) ; 
+                }
+	ne_hook_post_send(sess,fn?&neon_cb___cb__5:NULL,pObject);
+
+
+void
+hook_pre_send(sess,fn)
+	ne_session * sess
+	CV * fn
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (fn)
+                {
+                SvREFCNT_inc ((SV *)fn) ;
+                hv_store (pObjHV, "__cb__6", 7, (SV *)fn, 0) ; 
+                }
+	ne_hook_pre_send(sess,fn?&neon_cb___cb__6:NULL,pObject);
+
+
 void *
 hook_private(sess,id)
 	ne_session * sess
@@ -1982,6 +2410,16 @@ CODE:
 	RETVAL = 	ne_session_hook_private(sess,id);
 OUTPUT:
 RETVAL
+
+
+void
+hook_session_accessor(sess,id,arg2,userdata)
+	ne_session * sess
+	char * id
+	ne_accessor_fn arg2
+	void * userdata
+CODE:
+	ne_hook_session_accessor(sess,id,arg2,userdata);
 
 
 int
@@ -2009,9 +2447,9 @@ lock_discover(sess,uri,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__3", 7, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__7", 7, (SV *)result, 0) ; 
                 }
-	RETVAL = 	ne_lock_discover(sess,uri,result?&neon_cb___cb__3:NULL,pObject);
+	RETVAL = 	ne_lock_discover(sess,uri,result?&neon_cb___cb__7:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2107,9 +2545,9 @@ propnames(sess,href,depth,results)
             if (results)
                 {
                 SvREFCNT_inc ((SV *)results) ;
-                hv_store (pObjHV, "__cb__4", 7, (SV *)results, 0) ; 
+                hv_store (pObjHV, "__cb__8", 7, (SV *)results, 0) ; 
                 }
-	RETVAL = 	ne_propnames(sess,href,depth,results?&neon_cb___cb__4:NULL,pObject);
+	RETVAL = 	ne_propnames(sess,href,depth,results?&neon_cb___cb__8:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2173,9 +2611,9 @@ read_file(sess,uri,reader)
             if (reader)
                 {
                 SvREFCNT_inc ((SV *)reader) ;
-                hv_store (pObjHV, "__cb__5", 7, (SV *)reader, 0) ; 
+                hv_store (pObjHV, "__cb__9", 7, (SV *)reader, 0) ; 
                 }
-	RETVAL = 	ne_read_file(sess,uri,reader?&neon_cb___cb__5:NULL,pObject);
+	RETVAL = 	ne_read_file(sess,uri,reader?&neon_cb___cb__9:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2203,15 +2641,15 @@ redirect_register(sess,confirm,notify)
             if (confirm)
                 {
                 SvREFCNT_inc ((SV *)confirm) ;
-                hv_store (pObjHV, "__cb__6", 7, (SV *)confirm, 0) ; 
+                hv_store (pObjHV, "__cb__10", 8, (SV *)confirm, 0) ; 
                 }
 
             if (notify)
                 {
                 SvREFCNT_inc ((SV *)notify) ;
-                hv_store (pObjHV, "__cb__7", 7, (SV *)notify, 0) ; 
+                hv_store (pObjHV, "__cb__11", 8, (SV *)notify, 0) ; 
                 }
-	ne_redirect_register(sess,confirm?&neon_cb___cb__6:NULL,notify?&neon_cb___cb__7:NULL,pObject);
+	ne_redirect_register(sess,confirm?&neon_cb___cb__10:NULL,notify?&neon_cb___cb__11:NULL,pObject);
 
 
 ne_request *
@@ -2283,9 +2721,9 @@ set_progress(sess,progress)
             if (progress)
                 {
                 SvREFCNT_inc ((SV *)progress) ;
-                hv_store (pObjHV, "__cb__8", 7, (SV *)progress, 0) ; 
+                hv_store (pObjHV, "__cb__12", 8, (SV *)progress, 0) ; 
                 }
-	ne_set_progress(sess,progress?&neon_cb___cb__8:NULL,pObject);
+	ne_set_progress(sess,progress?&neon_cb___cb__12:NULL,pObject);
 
 
 void
@@ -2301,9 +2739,9 @@ set_proxy_auth(sess,callback)
             if (callback)
                 {
                 SvREFCNT_inc ((SV *)callback) ;
-                hv_store (pObjHV, "__cb__9", 7, (SV *)callback, 0) ; 
+                hv_store (pObjHV, "__cb__13", 8, (SV *)callback, 0) ; 
                 }
-	ne_set_proxy_auth(sess,callback?&neon_cb___cb__9:NULL,pObject);
+	ne_set_proxy_auth(sess,callback?&neon_cb___cb__13:NULL,pObject);
 
 
 int
@@ -2347,9 +2785,9 @@ set_server_auth(sess,callback)
             if (callback)
                 {
                 SvREFCNT_inc ((SV *)callback) ;
-                hv_store (pObjHV, "__cb__10", 8, (SV *)callback, 0) ; 
+                hv_store (pObjHV, "__cb__14", 8, (SV *)callback, 0) ; 
                 }
-	ne_set_server_auth(sess,callback?&neon_cb___cb__10:NULL,pObject);
+	ne_set_server_auth(sess,callback?&neon_cb___cb__14:NULL,pObject);
 
 
 void
@@ -2365,9 +2803,9 @@ set_status(sess,status)
             if (status)
                 {
                 SvREFCNT_inc ((SV *)status) ;
-                hv_store (pObjHV, "__cb__11", 8, (SV *)status, 0) ; 
+                hv_store (pObjHV, "__cb__15", 8, (SV *)status, 0) ; 
                 }
-	ne_set_status(sess,status?&neon_cb___cb__11:NULL,pObject);
+	ne_set_status(sess,status?&neon_cb___cb__15:NULL,pObject);
 
 
 void
@@ -2394,9 +2832,9 @@ simple_propfind(sess,uri,depth,props,results)
             if (results)
                 {
                 SvREFCNT_inc ((SV *)results) ;
-                hv_store (pObjHV, "__cb__12", 8, (SV *)results, 0) ; 
+                hv_store (pObjHV, "__cb__16", 8, (SV *)results, 0) ; 
                 }
-	RETVAL = 	ne_simple_propfind(sess,uri,depth,props,results?&neon_cb___cb__12:NULL,pObject);
+	RETVAL = 	ne_simple_propfind(sess,uri,depth,props,results?&neon_cb___cb__16:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2552,9 +2990,9 @@ iterate(sess,func)
             if (func)
                 {
                 SvREFCNT_inc ((SV *)func) ;
-                hv_store (pObjHV, "__cb__13", 8, (SV *)func, 0) ; 
+                hv_store (pObjHV, "__cb__17", 8, (SV *)func, 0) ; 
                 }
-	RETVAL = 	ne_lock_iterate(sess,func?&neon_cb___cb__13:NULL,pObject);
+	RETVAL = 	ne_lock_iterate(sess,func?&neon_cb___cb__17:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2670,9 +3108,9 @@ set_propstat_handlers(p,start,end)
             if (end)
                 {
                 SvREFCNT_inc ((SV *)end) ;
-                hv_store (pObjHV, "__cb__14", 8, (SV *)end, 0) ; 
+                hv_store (pObjHV, "__cb__18", 8, (SV *)end, 0) ; 
                 }
-	ne_207_set_propstat_handlers(p,start,end?&neon_cb___cb__14:NULL);
+	ne_207_set_propstat_handlers(p,start,end?&neon_cb___cb__18:NULL);
 
 
 void
@@ -2689,9 +3127,9 @@ set_response_handlers(p,start,end)
             if (end)
                 {
                 SvREFCNT_inc ((SV *)end) ;
-                hv_store (pObjHV, "__cb__15", 8, (SV *)end, 0) ; 
+                hv_store (pObjHV, "__cb__19", 8, (SV *)end, 0) ; 
                 }
-	ne_207_set_response_handlers(p,start,end?&neon_cb___cb__15:NULL);
+	ne_207_set_response_handlers(p,start,end?&neon_cb___cb__19:NULL);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Propfind
 
@@ -2726,9 +3164,9 @@ allprop(handler,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__16", 8, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__20", 8, (SV *)result, 0) ; 
                 }
-	RETVAL = 	ne_propfind_allprop(handler,result?&neon_cb___cb__16:NULL,pObject);
+	RETVAL = 	ne_propfind_allprop(handler,result?&neon_cb___cb__20:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2774,9 +3212,9 @@ named(handler,prop,result)
             if (result)
                 {
                 SvREFCNT_inc ((SV *)result) ;
-                hv_store (pObjHV, "__cb__17", 8, (SV *)result, 0) ; 
+                hv_store (pObjHV, "__cb__21", 8, (SV *)result, 0) ; 
                 }
-	RETVAL = 	ne_propfind_named(handler,prop,result?&neon_cb___cb__17:NULL,pObject);
+	RETVAL = 	ne_propfind_named(handler,prop,result?&neon_cb___cb__21:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2821,9 +3259,9 @@ iterate(set,iterator)
             if (iterator)
                 {
                 SvREFCNT_inc ((SV *)iterator) ;
-                hv_store (pObjHV, "__cb__18", 8, (SV *)iterator, 0) ; 
+                hv_store (pObjHV, "__cb__22", 8, (SV *)iterator, 0) ; 
                 }
-	RETVAL = 	ne_propset_iterate(set,iterator?&neon_cb___cb__18:NULL,pObject);
+	RETVAL = 	ne_propset_iterate(set,iterator?&neon_cb___cb__22:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2917,15 +3355,15 @@ add_response_body_reader(req,accpt,rdr)
             if (accpt)
                 {
                 SvREFCNT_inc ((SV *)accpt) ;
-                hv_store (pObjHV, "__cb__19", 8, (SV *)accpt, 0) ; 
+                hv_store (pObjHV, "__cb__23", 8, (SV *)accpt, 0) ; 
                 }
 
             if (rdr)
                 {
                 SvREFCNT_inc ((SV *)rdr) ;
-                hv_store (pObjHV, "__cb__20", 8, (SV *)rdr, 0) ; 
+                hv_store (pObjHV, "__cb__24", 8, (SV *)rdr, 0) ; 
                 }
-	ne_add_response_body_reader(req,accpt?&neon_cb___cb__19:NULL,rdr?&neon_cb___cb__20:NULL,pObject);
+	ne_add_response_body_reader(req,accpt?&neon_cb___cb__23:NULL,rdr?&neon_cb___cb__24:NULL,pObject);
 
 
 void
@@ -2941,9 +3379,9 @@ add_response_header_catcher(req,hdl)
             if (hdl)
                 {
                 SvREFCNT_inc ((SV *)hdl) ;
-                hv_store (pObjHV, "__cb__21", 8, (SV *)hdl, 0) ; 
+                hv_store (pObjHV, "__cb__25", 8, (SV *)hdl, 0) ; 
                 }
-	ne_add_response_header_catcher(req,hdl?&neon_cb___cb__21:NULL,pObject);
+	ne_add_response_header_catcher(req,hdl?&neon_cb___cb__25:NULL,pObject);
 
 
 void
@@ -2960,9 +3398,9 @@ add_response_header_handler(req,name,hdl)
             if (hdl)
                 {
                 SvREFCNT_inc ((SV *)hdl) ;
-                hv_store (pObjHV, "__cb__22", 8, (SV *)hdl, 0) ; 
+                hv_store (pObjHV, "__cb__26", 8, (SV *)hdl, 0) ; 
                 }
-	ne_add_response_header_handler(req,name,hdl?&neon_cb___cb__22:NULL,pObject);
+	ne_add_response_header_handler(req,name,hdl?&neon_cb___cb__26:NULL,pObject);
 
 
 int
@@ -2970,6 +3408,33 @@ begin_request(req)
 	ne_request * req
 CODE:
 	RETVAL = 	ne_begin_request(req);
+OUTPUT:
+RETVAL
+
+
+ne_decompress *
+decompress_reader(req,accpt,rdr)
+	ne_request * req
+	CV * accpt
+	CV * rdr
+
+        PREINIT:
+            SV * pObject = ST(0) ;
+            HV * pObjHV  = (HV *)SvRV(pObject) ;
+        CODE:
+
+            if (accpt)
+                {
+                SvREFCNT_inc ((SV *)accpt) ;
+                hv_store (pObjHV, "__cb__27", 8, (SV *)accpt, 0) ; 
+                }
+
+            if (rdr)
+                {
+                SvREFCNT_inc ((SV *)rdr) ;
+                hv_store (pObjHV, "__cb__28", 8, (SV *)rdr, 0) ; 
+                }
+	RETVAL = 	ne_decompress_reader(req,accpt?&neon_cb___cb__27:NULL,rdr?&neon_cb___cb__28:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -2992,6 +3457,15 @@ OUTPUT:
 RETVAL
 
 
+ne_session *
+get_session(req)
+	ne_request * req
+CODE:
+	RETVAL = 	ne_get_session(req);
+OUTPUT:
+RETVAL
+
+
 const ne_status *
 get_status(req)
 	ne_request * req
@@ -3009,6 +3483,16 @@ CODE:
 	RETVAL = 	ne_request_hook_private(req,id);
 OUTPUT:
 RETVAL
+
+
+void
+hook_request_accessor(req,id,arg2,userdata)
+	ne_request * req
+	char * id
+	ne_accessor_fn arg2
+	void * userdata
+CODE:
+	ne_hook_request_accessor(req,id,arg2,userdata);
 
 
 void
@@ -3072,9 +3556,9 @@ set_request_body_provider(req,size,provider)
             if (provider)
                 {
                 SvREFCNT_inc ((SV *)provider) ;
-                hv_store (pObjHV, "__cb__23", 8, (SV *)provider, 0) ; 
+                hv_store (pObjHV, "__cb__29", 8, (SV *)provider, 0) ; 
                 }
-	ne_set_request_body_provider(req,size,provider?&neon_cb___cb__23:NULL,pObject);
+	ne_set_request_body_provider(req,size,provider?&neon_cb___cb__29:NULL,pObject);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::SSL
 
@@ -3141,9 +3625,9 @@ set_key_prompt(c,prompt)
             if (prompt)
                 {
                 SvREFCNT_inc ((SV *)prompt) ;
-                hv_store (pObjHV, "__cb__24", 8, (SV *)prompt, 0) ; 
+                hv_store (pObjHV, "__cb__30", 8, (SV *)prompt, 0) ; 
                 }
-	sock_set_key_prompt(c,prompt?&neon_cb___cb__24:NULL,pObject);
+	sock_set_key_prompt(c,prompt?&neon_cb___cb__30:NULL,pObject);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Socket
 
@@ -3287,9 +3771,9 @@ readfile_blocked(sock,length,reader)
             if (reader)
                 {
                 SvREFCNT_inc ((SV *)reader) ;
-                hv_store (pObjHV, "__cb__25", 8, (SV *)reader, 0) ; 
+                hv_store (pObjHV, "__cb__31", 8, (SV *)reader, 0) ; 
                 }
-	RETVAL = 	sock_readfile_blocked(sock,length,reader?&neon_cb___cb__25:NULL,pObject);
+	RETVAL = 	sock_readfile_blocked(sock,length,reader?&neon_cb___cb__31:NULL,pObject);
 OUTPUT:
 RETVAL
 
@@ -3318,9 +3802,9 @@ register_progress(sock,cb)
             if (cb)
                 {
                 SvREFCNT_inc ((SV *)cb) ;
-                hv_store (pObjHV, "__cb__26", 8, (SV *)cb, 0) ; 
+                hv_store (pObjHV, "__cb__32", 8, (SV *)cb, 0) ; 
                 }
-	sock_register_progress(sock,cb?&neon_cb___cb__26:NULL,pObject);
+	sock_register_progress(sock,cb?&neon_cb___cb__32:NULL,pObject);
 
 
 int
@@ -3429,6 +3913,15 @@ CODE:
 	ne_debug_init(stream,mask);
 
 
+int
+decompress_destroy(ctx)
+	ne_decompress * ctx
+CODE:
+	RETVAL = 	ne_decompress_destroy(ctx);
+OUTPUT:
+RETVAL
+
+
 void
 duplicate_header(userdata,value)
 	void * userdata
@@ -3520,6 +4013,15 @@ RETVAL
 
 void
 neon_i18n_init()
+
+
+void *
+null_accessor(userdata)
+	void * userdata
+CODE:
+	RETVAL = 	ne_null_accessor(userdata);
+OUTPUT:
+RETVAL
 
 
 int
@@ -3833,21 +4335,21 @@ push_handler(p,elements,validate_cb,startelm_cb,endelm_cb)
             if (validate_cb)
                 {
                 SvREFCNT_inc ((SV *)validate_cb) ;
-                hv_store (pObjHV, "__cb__27", 8, (SV *)validate_cb, 0) ; 
+                hv_store (pObjHV, "__cb__33", 8, (SV *)validate_cb, 0) ; 
                 }
 
             if (startelm_cb)
                 {
                 SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__28", 8, (SV *)startelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__34", 8, (SV *)startelm_cb, 0) ; 
                 }
 
             if (endelm_cb)
                 {
                 SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__29", 8, (SV *)endelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__35", 8, (SV *)endelm_cb, 0) ; 
                 }
-	ne_xml_push_handler(p,elements,validate_cb?&neon_cb___cb__27:NULL,startelm_cb?&neon_cb___cb__28:NULL,endelm_cb?&neon_cb___cb__29:NULL,pObject);
+	ne_xml_push_handler(p,elements,validate_cb?&neon_cb___cb__33:NULL,startelm_cb?&neon_cb___cb__34:NULL,endelm_cb?&neon_cb___cb__35:NULL,pObject);
 
 
 void
@@ -3867,27 +4369,27 @@ push_mixed_handler(p,elements,validate_cb,startelm_cb,cdata_cb,endelm_cb)
             if (validate_cb)
                 {
                 SvREFCNT_inc ((SV *)validate_cb) ;
-                hv_store (pObjHV, "__cb__30", 8, (SV *)validate_cb, 0) ; 
+                hv_store (pObjHV, "__cb__36", 8, (SV *)validate_cb, 0) ; 
                 }
 
             if (startelm_cb)
                 {
                 SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__31", 8, (SV *)startelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__37", 8, (SV *)startelm_cb, 0) ; 
                 }
 
             if (cdata_cb)
                 {
                 SvREFCNT_inc ((SV *)cdata_cb) ;
-                hv_store (pObjHV, "__cb__32", 8, (SV *)cdata_cb, 0) ; 
+                hv_store (pObjHV, "__cb__38", 8, (SV *)cdata_cb, 0) ; 
                 }
 
             if (endelm_cb)
                 {
                 SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__33", 8, (SV *)endelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__39", 8, (SV *)endelm_cb, 0) ; 
                 }
-	ne_xml_push_mixed_handler(p,elements,validate_cb?&neon_cb___cb__30:NULL,startelm_cb?&neon_cb___cb__31:NULL,cdata_cb?&neon_cb___cb__32:NULL,endelm_cb?&neon_cb___cb__33:NULL,pObject);
+	ne_xml_push_mixed_handler(p,elements,validate_cb?&neon_cb___cb__36:NULL,startelm_cb?&neon_cb___cb__37:NULL,cdata_cb?&neon_cb___cb__38:NULL,endelm_cb?&neon_cb___cb__39:NULL,pObject);
 
 
 void

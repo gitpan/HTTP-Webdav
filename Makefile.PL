@@ -3,7 +3,7 @@
 #
 # (C) 2001 G.Richter / ECOS
 #
-# $Id: Makefile.PL,v 1.9 2001/09/24 15:32:30 richter Exp $
+# $Id: Makefile.PL,v 1.10 2001/10/19 04:36:30 richter Exp $
 #
  
 
@@ -17,7 +17,7 @@ sub error
     exit (1) ;
     }
 
-$pversion = 'neon 0.16.1' ;
+$pversion = 'neon 0.17.1' ;
 
 if (!$win32)
     {

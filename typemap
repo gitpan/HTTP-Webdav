@@ -5,6 +5,7 @@ ne_content_range * ne_content_range__
 const ne_server_capabilities * ne_server_capabilities__
 CV * T_CVREF2
 const ne_proppatch_operation * ne_proppatch_operation__
+const ne_acl_entry * ne_acl_entry__
 const ne_propname * ne_propname__
 const ne_status * ne_status__
 ne_lock_struct * ne_lock_struct__
@@ -25,9 +26,9 @@ xxxxx T_PTRNULL
 unsigned short int T_IV
 ne_server_capabilities * ne_server_capabilities__
 ne_proppatch_operation * ne_proppatch_operation__
+ne_acl_entry * ne_acl_entry__
 ne_propname * ne_propname__
 const ne_content_type * ne_content_type__
-ne_use_proxy T_CVREF2
 ne_session * ne_session__
 const ne_session * ne_session__
 struct in_addr * T_PTRNULL
@@ -35,61 +36,69 @@ const struct in_addr * T_PTRNULL
 void * T_PTRNULL
 const void * T_PTRNULL
 sock_progress T_CVREF2
-ne_request * ne_request__
-const ne_request * ne_request__
 ne_207_start_response T_PTRNULL
 const ne_207_start_response T_PTRNULL
 struct uri * T_PTRNULL
 const struct uri * T_PTRNULL
 ne_lock_session * ne_lock_session__
 const ne_lock_session * ne_lock_session__
-time_t * T_PTRNULL
-const time_t * T_PTRNULL
-ne_request_auth T_CVREF2
+ne_cookie_cache * T_PTRNULL
+const ne_cookie_cache * T_PTRNULL
 ne_prop_result_set * ne_prop_result_set__
 const ne_prop_result_set * ne_prop_result_set__
-nssl_context * nssl_context__
-const nssl_context * nssl_context__
-ne_request_hooks * T_PTRNULL
-const ne_request_hooks * T_PTRNULL
-ne_props_create_complex T_PTRNULL
-const ne_props_create_complex T_PTRNULL
 ne_xml_validate_cb T_CVREF2
-ne_redirect_confirm T_CVREF2
-void T_PTRNULL
-const void T_PTRNULL
-ne_207_start_propstat T_PTRNULL
-const ne_207_start_propstat T_PTRNULL
+ne_lock_result T_CVREF2
 struct ne_md5_ctx * struct_ne_md__ctx__
 const struct ne_md5_ctx * struct_ne_md__ctx__
-ne_lock_walkfunc T_CVREF2
-ne_header_handler T_CVREF2
-ne_lock_result T_CVREF2
 ne_207_parser * ne_____parser__
 const ne_207_parser * ne_____parser__
-nsocket * nsocket__
-const nsocket * nsocket__
 ne_xml_cdata_cb T_CVREF2
-ne_props_result T_CVREF2
 ne_propset_iterator T_CVREF2
-nssl_key_prompt T_CVREF2
-sock_block_reader T_CVREF2
-ne_notify_status T_CVREF2
 ne_207_end_response T_CVREF2
-ne_block_reader T_CVREF2
 ne_accept_response T_CVREF2
 ne_xml_startelm_cb T_CVREF2
 struct ne_xml_elm * T_PTRNULL
 const struct ne_xml_elm * T_PTRNULL
 ne_buffer * ne_buffer__
 const ne_buffer * ne_buffer__
-ne_free_hooks T_CVREF2
 ne_provide_body T_CVREF2
+ne_use_proxy T_CVREF2
+ne_request * ne_request__
+const ne_request * ne_request__
+time_t * T_PTRNULL
+const time_t * T_PTRNULL
+ne_request_auth T_CVREF2
+nssl_context * nssl_context__
+const nssl_context * nssl_context__
+ne_props_create_complex T_PTRNULL
+const ne_props_create_complex T_PTRNULL
+ne_redirect_confirm T_CVREF2
+void T_PTRNULL
+const void T_PTRNULL
+ne_207_start_propstat T_PTRNULL
+const ne_207_start_propstat T_PTRNULL
+ne_pre_send_fn T_CVREF2
+ne_lock_walkfunc T_CVREF2
+ne_header_handler T_CVREF2
+ne_create_request_fn T_CVREF2
+nsocket * nsocket__
+const nsocket * nsocket__
+ne_props_result T_CVREF2
+nssl_key_prompt T_CVREF2
+sock_block_reader T_CVREF2
+ne_notify_status T_CVREF2
+ne_destory_fn T_CVREF2
+ne_block_reader T_CVREF2
+ne_decompress * T_PTRNULL
+const ne_decompress * T_PTRNULL
+ne_post_send_fn T_CVREF2
+ne_accessor_fn T_PTRNULL
+const ne_accessor_fn T_PTRNULL
 ne_xml_parser * ne_xml_parser__
 const ne_xml_parser * ne_xml_parser__
+ne_xml_endelm_cb T_CVREF2
 ne_propfind_handler * ne_propfind_handler__
 const ne_propfind_handler * ne_propfind_handler__
-ne_xml_endelm_cb T_CVREF2
 ne_redirect_notify T_CVREF2
 ne_207_end_propstat T_CVREF2
 
@@ -266,6 +275,18 @@ nssl_certificate__
             }
         }
 
+struct_ne_md__ctx__
+
+        {
+        SV ** ppObj = NULL ;
+        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+
+        if (!ppObj || !*ppObj)
+            croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
+
+        $var = ($type)SvIV (*ppObj) ;
+        }
+
 ne_server_capabilities__
 
         {
@@ -435,6 +456,35 @@ ne_buffer__
         $var = ($type)SvIV (*ppObj) ;
         }
 
+ne_acl_entry__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->apply = (int)SvIV(__fetchmember(_pHV_,\"apply\"))	;
+	(($type)$var)->type = (int)SvIV(__fetchmember(_pHV_,\"type\"))	;
+	(($type)$var)->principal = (char *)SvPV(__fetchmember(_pHV_,\"principal\"),PL_na)	;
+	(($type)$var)->read = (int)SvIV(__fetchmember(_pHV_,\"read\"))	;
+	(($type)$var)->read_acl = (int)SvIV(__fetchmember(_pHV_,\"read_acl\"))	;
+	(($type)$var)->write = (int)SvIV(__fetchmember(_pHV_,\"write\"))	;
+	(($type)$var)->write_acl = (int)SvIV(__fetchmember(_pHV_,\"write_acl\"))	;
+	(($type)$var)->read_cuprivset = (int)SvIV(__fetchmember(_pHV_,\"read_cuprivset\"))	;
+
+            }
+        else
+            {
+            $var = NULL ;
+            }
+        }
+
 ne_request__
 
         {
@@ -502,18 +552,6 @@ T_mallocstr
 	else
 	    croak(\"$var is not a reference to a sub\")
         
-struct_ne_md__ctx__
-
-        {
-        SV ** ppObj = NULL ;
-        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
-
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::MD5\") ;
-
-        $var = ($type)SvIV (*ppObj) ;
-        }
-
 T_PTRNULL
 
         if (SvIOK ($arg))
@@ -760,6 +798,22 @@ nssl_certificate__
             }
         }
 
+struct_ne_md__ctx__
+
+        {
+        SV ** ppArg ;
+        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
+        if (!SvOK(*ppArg))
+            {
+            SV * pObj ;
+            *ppArg = newRV_noinc ((SV *)newHV()) ;
+            sv_2mortal(*ppArg) ;
+	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MD5\", 0)) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            }
+        $arg = *ppArg ;
+        }
+
 ne_server_capabilities__
 
         {
@@ -904,6 +958,41 @@ ne_buffer__
         $arg = *ppArg ;
         }
 
+ne_acl_entry__
+
+        {
+        HV * _pHV_ ;
+        if (!SvOK($arg))
+            {
+            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal ($arg) ;
+            }
+        else if (!SvROK ($arg))
+            {
+            croak (\"$var must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
+	sv_setiv(__fetchmember(_pHV_,\"apply\"), (IV)(($type)$var)->apply);	;
+	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)(($type)$var)->type);	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"principal\"), (($type)$var)->principal);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"read\"), (IV)(($type)$var)->read);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"read_acl\"), (IV)(($type)$var)->read_acl);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"write\"), (IV)(($type)$var)->write);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"write_acl\"), (IV)(($type)$var)->write_acl);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"read_cuprivset\"), (IV)(($type)$var)->read_cuprivset);
+	;
+
+            }
+        }
+
 ne_request__
 
         {
@@ -970,22 +1059,6 @@ nssl_context__
             *ppArg = newRV_noinc ((SV *)newHV()) ;
             sv_2mortal(*ppArg) ;
 	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::SSL\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
-            }
-        $arg = *ppArg ;
-        }
-
-struct_ne_md__ctx__
-
-        {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
-            {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-            sv_2mortal(*ppArg) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::MD5\", 0)) ;
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;

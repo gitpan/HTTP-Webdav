@@ -1,3 +1,12 @@
+0.1.18
+
+   - Works now with and include new functions of neon 0.17.1
+
+0.1.17
+
+   - make lock an i/o parameter in ne_lock, so the lock token is returned.
+     Problem reported by Arun Garg.
+
 0.1.16
 
     - Works now with neon 0.16.1
