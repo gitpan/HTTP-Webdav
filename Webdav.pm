@@ -25,7 +25,7 @@ use vars qw($VERSION @ISA $initdone);
 
 require Exporter;
 
-$VERSION = "0.1.13-0.15.1";
+$VERSION = "0.1.14-0.15.1";
 
 require DynaLoader;
 

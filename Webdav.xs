@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.xs,v 1.21 2001/06/11 04:09:46 richter Exp $
+# $Id: Webdav.xs,v 1.22 2001/06/11 12:07:48 richter Exp $
 #
 ############################################################################
 */
@@ -1581,7 +1581,7 @@ void neon_cb___cb__25 (
     
     /* *** sock_progress set by ne_set_progress *** */
 
-void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__8 (void *userdata, off_t  progress, off_t  total)
     {
 
     int cnt ;
@@ -1617,7 +1617,7 @@ void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
     
     /* *** sock_progress set by sock_register_progress *** */
 
-void neon_cb___cb__26 (void *userdata, off_t progress, off_t total)
+void neon_cb___cb__26 (void *userdata, off_t  progress, off_t  total)
     {
 
     int cnt ;
@@ -2329,6 +2329,22 @@ OUTPUT:
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Lock
 
 
+
+void
+DESTROY(obj)
+	const struct ne_lock * obj
+CODE:
+        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
+            {
+            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
+	    if (ppArg && *ppArg)
+                {
+                *ppArg = NULL ;
+                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
+                }
+            }
+
+
 struct ne_lock *
 copy(lock)
 	struct ne_lock * lock
@@ -2345,6 +2361,22 @@ CODE:
 	ne_lock_free(lock);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::LockSession
+
+
+
+void
+DESTROY(obj)
+	ne_lock_session * obj
+CODE:
+        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
+            {
+            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
+	    if (ppArg && *ppArg)
+                {
+                *ppArg = NULL ;
+                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
+                }
+            }
 
 
 void
@@ -2393,6 +2425,22 @@ CODE:
 	ne_lock_remove(sess,lock);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::MD5
+
+
+
+void
+DESTROY(obj)
+	struct ne_md5_ctx * obj
+CODE:
+        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
+            {
+            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
+	    if (ppArg && *ppArg)
+                {
+                *ppArg = NULL ;
+                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
+                }
+            }
 
 
 void *
@@ -2600,6 +2648,22 @@ CODE:
 	ne_propfind_set_private(handler,creator,userdata);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Propset
+
+
+
+void
+DESTROY(obj)
+	const ne_prop_result_set * obj
+CODE:
+        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
+            {
+            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
+	    if (ppArg && *ppArg)
+                {
+                *ppArg = NULL ;
+                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
+                }
+            }
 
 
 int
@@ -2940,6 +3004,22 @@ set_key_prompt(c,prompt)
 	sock_set_key_prompt(c,prompt?&neon_cb___cb__24:NULL,pObject);
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Socket
+
+
+
+void
+DESTROY(obj)
+	nsocket * obj
+CODE:
+        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
+            {
+            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
+	    if (ppArg && *ppArg)
+                {
+                *ppArg = NULL ;
+                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
+                }
+            }
 
 
 int

@@ -1,4 +1,11 @@
 
+0.1.14
+
+    - Add DESTROY methods for all classes (before we had only
+      DESTROY for classes that calls ne_destroy_xxx), so we
+      are sure memory and internal data structures are cleaned
+      up correctly.
+
 0.1.13
 
     - tested against neon 0.15.1
