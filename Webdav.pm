@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.pm,v 1.15 2001/08/10 12:46:34 richter Exp $
+# $Id: Webdav.pm,v 1.17 2001/09/24 15:32:41 richter Exp $
 #
 ############################################################################
 
@@ -25,7 +25,7 @@ use vars qw($VERSION @ISA $initdone);
 
 require Exporter;
 
-$VERSION = "0.1.16-0.16.1";
+$VERSION = "0.1.17-0.16.1";
 
 require DynaLoader;
 

@@ -3,7 +3,7 @@
 #
 # (C) 2001 G.Richter / ECOS
 #
-# $Id: Makefile.PL,v 1.8 2001/08/10 12:46:34 richter Exp $
+# $Id: Makefile.PL,v 1.9 2001/09/24 15:32:30 richter Exp $
 #
  
 

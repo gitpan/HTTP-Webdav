@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.xs1,v 1.4 2001/06/07 05:30:14 richter Exp $
+# $Id: Webdav.xs,v 1.24 2001/09/24 15:32:31 richter Exp $
 #
 ############################################################################
 */
@@ -1992,6 +1992,7 @@ CODE:
 	RETVAL = 	ne_lock(sess,lock);
 OUTPUT:
 RETVAL
+lock
 
 
 int

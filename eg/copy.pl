@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: copy.pl,v 1.4 2001/06/05 09:22:37 richter Exp $
+# $Id: copy.pl,v 1.5 2001/09/24 15:32:31 richter Exp $
 #
 ############################################################################
 

@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: copy.pl,v 1.4 2001/06/05 09:22:37 richter Exp $
+# $Id: lock.pl,v 1.1 2001/09/24 15:32:31 richter Exp $
 #
 ############################################################################
 
@@ -47,6 +47,7 @@ sub discover
         print "$k=$v " ;
         }
 
+
     print "\n" ;
     }
 
@@ -57,15 +58,39 @@ $sess = HTTP::Webdav -> new ;
 $sess -> server ("www.gr.ecos.de", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
-$sess->lock({ uri => "/dav", depth => NE_DEPTH_INFINITE, scope => 0,
-              type => 0,owner => "richter",timeout => 1000});
+my $lock = 
+    { 
+    uri => "/dav", 
+    depth => NE_DEPTH_INFINITE, 
+    # 0 for exclusive scope  & 1 for shared scope
+    scope => 0,
+    # 0 for write type
+    type => 0,
+    owner => "richter",
+    timeout => 60
+    } ;
 
-# 0 for exclusive scope  & 1 for shared scope
-# 0 for write type
+
+print "*** lock the resource\n" ;
+$sess->lock($lock);
+
+print "Status: ", $sess -> get_error , " locktoken: $lock->{token} \n";
+
+print "*** check if it is locked\n" ;
+$sess -> lock_discover ($lock -> {uri}, \&discover) ;
 
 print "Status: ", $sess -> get_error , "\n";
 
 
+# here you can do something....
+
+print "*** unlock the resource\n" ;
+$sess->unlock($lock);
+
+print "Status: ", $sess -> get_error , " locktoken: $lock->{token} \n";
+
+
+print "*** check if it is unlocked\n" ;
 $sess -> lock_discover ('/dav', \&discover) ;
 
 print "Status: ", $sess -> get_error , "\n";
