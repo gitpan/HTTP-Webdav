@@ -1,4 +1,4 @@
-/* $Id: Webdav.xs,v 1.10 2001/06/01 10:36:07 richter Exp $ */
+/* $Id: Webdav.xs,v 1.11 2001/06/04 13:14:30 richter Exp $ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -232,7 +232,7 @@ void neon_cb___cb__2 (void *userdata, const struct dav_lock *lock,
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Lock", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)lock), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)lock), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -306,7 +306,7 @@ void neon_cb___cb__18 (struct dav_lock *lock, void *userdata)
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Lock", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)lock), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)lock), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -357,7 +357,7 @@ void neon_cb___cb__3 (void *userdata, const char *href,
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)results), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -406,7 +406,7 @@ void neon_cb___cb__21 (void *userdata, const char *href,
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)results), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -455,7 +455,7 @@ void neon_cb___cb__22 (void *userdata, const char *href,
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)results), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -504,7 +504,7 @@ void neon_cb___cb__4 (void *userdata, const char *href,
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Propset", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)results), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)results), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -886,7 +886,7 @@ int neon_cb___cb__24 (
             SV * pObj ;
             *ppArg = newRV_noinc ((SV *)newHV()) ;
 	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Request", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (PV), newSViv ((IV)req), 0) ;
+            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)req), 0) ;
             }
         pSV = *ppArg ;
         }
@@ -1627,7 +1627,7 @@ void neon_cb___cb__31 (
     
     /* *** sock_progress set by http_set_progress *** */
 
-void neon_cb___cb__9 (void *userdata, off_t  progress, off_t  total)
+void neon_cb___cb__9 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1663,7 +1663,7 @@ void neon_cb___cb__9 (void *userdata, off_t  progress, off_t  total)
     
     /* *** sock_progress set by sock_register_progress *** */
 
-void neon_cb___cb__32 (void *userdata, off_t  progress, off_t  total)
+void neon_cb___cb__32 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
