@@ -12,7 +12,7 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.xs,v 1.22 2001/06/11 12:07:48 richter Exp $
+# $Id: Webdav.xs1,v 1.4 2001/06/07 05:30:14 richter Exp $
 #
 ############################################################################
 */
@@ -50,6 +50,8 @@ extern "C" {
 #endif
 
 
+#undef _
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,6 +77,7 @@ SV * __fetchmember (HV * pHV, char * pKey)
 HV * pC2Perl ;
 HV * pPerl2C ;
 
+#undef scope
 
 
     struct perl_callback_data 
@@ -126,6 +129,8 @@ void neon_cb___cb__14 (
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (status)
+            {
 	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
@@ -137,6 +142,7 @@ void neon_cb___cb__14 (
 	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
@@ -194,6 +200,8 @@ void neon_cb___cb__15 (
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (status)
+            {
 	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
@@ -205,6 +213,7 @@ void neon_cb___cb__15 (
 	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
@@ -273,6 +282,8 @@ int neon_cb___cb__19 (
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (st)
+            {
 	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((ne_status *)st)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((ne_status *)st)->minor_version);
@@ -284,6 +295,7 @@ int neon_cb___cb__19 (
 	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((ne_status *)st)->reason_phrase);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 
@@ -503,17 +515,40 @@ void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock,
 	pSV = sv_newmortal ();
 	
         {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&lock), sizeof(lock), 1) ;
-        if (!SvOK(*ppArg))
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
             {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-            sv_2mortal(*ppArg) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Lock", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)lock), 0) ;
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
             }
-        pSV = *ppArg ;
+        else if (!SvROK (pSV))
+            {
+            croak ("lock must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (lock)
+            {
+	sv_setpv((SV*)__fetchmember(_pHV_,"uri"), ((const struct ne_lock *)lock)->uri);
+	;
+	sv_setiv(__fetchmember(_pHV_,"depth"), (IV)((const struct ne_lock *)lock)->depth);
+	;
+	sv_setiv(__fetchmember(_pHV_,"type"), (IV)((const struct ne_lock *)lock)->type);
+	;
+	sv_setiv(__fetchmember(_pHV_,"scope"), (IV)((const struct ne_lock *)lock)->scope);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"token"), ((const struct ne_lock *)lock)->token);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"owner"), ((const struct ne_lock *)lock)->owner);
+	;
+	sv_setiv(__fetchmember(_pHV_,"timeout"), (IV)((const struct ne_lock *)lock)->timeout);
+	;
+	sv_setiv(__fetchmember(_pHV_,"prev"), (IV)((const struct ne_lock *)lock)->prev);
+	;
+	sv_setiv(__fetchmember(_pHV_,"next"), (IV)((const struct ne_lock *)lock)->next);
+	;
+
+            }
         }
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
@@ -534,6 +569,8 @@ void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (status)
+            {
 	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
@@ -545,6 +582,7 @@ void neon_cb___cb__3 (void *userdata, const struct ne_lock *lock,
 	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 
@@ -578,17 +616,40 @@ void neon_cb___cb__13 (struct ne_lock *lock, void *userdata)
 	pSV = sv_newmortal ();
 	
         {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(&lock), sizeof(lock), 1) ;
-        if (!SvOK(*ppArg))
+        HV * _pHV_ ;
+        if (!SvOK(pSV))
             {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-            sv_2mortal(*ppArg) ;
-	    sv_bless (*ppArg, gv_stashpv ("HTTP::Webdav::Lock", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)lock), 0) ;
+            pSV = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal (pSV) ;
             }
-        pSV = *ppArg ;
+        else if (!SvROK (pSV))
+            {
+            croak ("lock must be a reference") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (lock)
+            {
+	sv_setpv((SV*)__fetchmember(_pHV_,"uri"), ((struct ne_lock *)lock)->uri);
+	;
+	sv_setiv(__fetchmember(_pHV_,"depth"), (IV)((struct ne_lock *)lock)->depth);
+	;
+	sv_setiv(__fetchmember(_pHV_,"type"), (IV)((struct ne_lock *)lock)->type);
+	;
+	sv_setiv(__fetchmember(_pHV_,"scope"), (IV)((struct ne_lock *)lock)->scope);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"token"), ((struct ne_lock *)lock)->token);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,"owner"), ((struct ne_lock *)lock)->owner);
+	;
+	sv_setiv(__fetchmember(_pHV_,"timeout"), (IV)((struct ne_lock *)lock)->timeout);
+	;
+	sv_setiv(__fetchmember(_pHV_,"prev"), (IV)((struct ne_lock *)lock)->prev);
+	;
+	sv_setiv(__fetchmember(_pHV_,"next"), (IV)((struct ne_lock *)lock)->next);
+	;
+
+            }
         }
 	XPUSHs(pSV);
 	pSV = (SV *)userdata;
@@ -881,11 +942,14 @@ int neon_cb___cb__18 (void *userdata,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (pname)
+            {
 	sv_setpv((SV*)__fetchmember(_pHV_,"nspace"), ((const ne_propname *)pname)->nspace);
 	;
 	sv_setpv((SV*)__fetchmember(_pHV_,"name"), ((const ne_propname *)pname)->name);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
@@ -906,6 +970,8 @@ int neon_cb___cb__18 (void *userdata,
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV(pSV)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if (status)
+            {
 	sv_setiv(__fetchmember(_pHV_,"major_version"), (IV)((const ne_status *)status)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,"minor_version"), (IV)((const ne_status *)status)->minor_version);
@@ -917,6 +983,7 @@ int neon_cb___cb__18 (void *userdata,
 	sv_setpv((SV*)__fetchmember(_pHV_,"reason_phrase"), ((const ne_status *)status)->reason_phrase);
 	;
 
+            }
         }
 	XPUSHs(pSV);
 
@@ -1257,7 +1324,7 @@ int neon_cb___cb__2 (void *userdata,
     
     /* *** ne_xml_cdata_cb set by ne_xml_push_mixed_handler *** */
 
-void neon_cb___cb__30 (void *userdata, const struct ne_xml_elm *s, 
+void neon_cb___cb__32 (void *userdata, const struct ne_xml_elm *s, 
      const char *cdata, int len)
     {
 
@@ -1270,7 +1337,7 @@ void neon_cb___cb__30 (void *userdata, const struct ne_xml_elm *s,
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__32", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1296,7 +1363,7 @@ void neon_cb___cb__30 (void *userdata, const struct ne_xml_elm *s,
     
     /* *** ne_xml_endelm_cb set by ne_xml_push_handler *** */
 
-int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
+int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
     {
 	int retval ;
 
@@ -1309,7 +1376,7 @@ int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *s, const char *cd
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__29", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1345,7 +1412,7 @@ int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *s, const char *cd
     
     /* *** ne_xml_endelm_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
+int neon_cb___cb__33 (void *userdata, const struct ne_xml_elm *s, const char *cdata)
     {
 	int retval ;
 
@@ -1358,7 +1425,7 @@ int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *s, const char *cd
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__33", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1394,7 +1461,7 @@ int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *s, const char *cd
     
     /* *** ne_xml_startelm_cb set by ne_xml_push_handler *** */
 
-int neon_cb___cb__27 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+int neon_cb___cb__28 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
     {
 	int retval ;
 
@@ -1407,7 +1474,7 @@ int neon_cb___cb__27 (void *userdata, const struct ne_xml_elm *elm, const char *
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__28", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
@@ -1442,7 +1509,7 @@ int neon_cb___cb__27 (void *userdata, const struct ne_xml_elm *elm, const char *
     
     /* *** ne_xml_startelm_cb set by ne_xml_push_mixed_handler *** */
 
-int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
+int neon_cb___cb__31 (void *userdata, const struct ne_xml_elm *elm, const char **atts)
     {
 	int retval ;
 
@@ -1455,13 +1522,109 @@ int neon_cb___cb__29 (void *userdata, const struct ne_xml_elm *elm, const char *
     SAVETMPS ;
     PUSHMARK(SP) ;
 
-    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__29", 8, 0) ;
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__31", 8, 0) ;
     if (ppCV && *ppCV)
         {
 	pSV = (SV *)userdata;
 	XPUSHs(pSV);
 	pSV = sv_newmortal ();
 	sv_setiv(pSV, (IV)elm);	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_xml_validate_cb set by ne_xml_push_handler *** */
+
+int neon_cb___cb__27 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__27", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
+
+    PUTBACK ;
+		cnt = perl_call_sv (*ppCV, G_SCALAR) ;
+		}
+
+    SPAGAIN ;
+    if (cnt != 1)
+        {
+        retval = 0 ;
+        }
+    else
+        {
+        pSV = POPs ;
+	retval = (int)SvIV(pSV);
+	}
+	PUTBACK ;
+
+    FREETMPS ;
+    LEAVE ;
+	return retval ;
+
+    }
+
+    
+    /* *** ne_xml_validate_cb set by ne_xml_push_mixed_handler *** */
+
+int neon_cb___cb__30 (void *userdata, ne_xml_elmid parent, ne_xml_elmid child)
+    {
+	int retval ;
+
+    int cnt ;
+    SV * pSV ;
+    SV ** ppCV ;
+
+    dSP ;
+    ENTER ;
+    SAVETMPS ;
+    PUSHMARK(SP) ;
+
+    ppCV = hv_fetch ((HV *)SvRV((SV *)userdata), "__cb__30", 8, 0) ;
+    if (ppCV && *ppCV)
+        {
+	pSV = (SV *)userdata;
+	XPUSHs(pSV);
+	pSV = sv_newmortal ();
+		XPUSHs(pSV);
 	pSV = sv_newmortal ();
 		XPUSHs(pSV);
 
@@ -1581,7 +1744,7 @@ void neon_cb___cb__25 (
     
     /* *** sock_progress set by ne_set_progress *** */
 
-void neon_cb___cb__8 (void *userdata, off_t  progress, off_t  total)
+void neon_cb___cb__8 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1617,7 +1780,7 @@ void neon_cb___cb__8 (void *userdata, off_t  progress, off_t  total)
     
     /* *** sock_progress set by sock_register_progress *** */
 
-void neon_cb___cb__26 (void *userdata, off_t  progress, off_t  total)
+void neon_cb___cb__26 (void *userdata, off_t progress, off_t total)
     {
 
     int cnt ;
@@ -1671,7 +1834,7 @@ CODE:
                 }
             }
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -1699,19 +1862,20 @@ close_connection(sess)
 CODE:
 	RETVAL = 	ne_close_connection(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
-copy(sess,overwrite,src,dest)
+copy(sess,overwrite,depth,src,dest)
 	ne_session * sess
 	int overwrite
+	int depth
 	char * src
 	char * dest
 CODE:
-	RETVAL = 	ne_copy(sess,overwrite,src,dest);
+	RETVAL = 	ne_copy(sess,overwrite,depth,src,dest);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -1739,7 +1903,7 @@ delete(sess,uri)
 CODE:
 	RETVAL = 	ne_delete(sess,uri);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -1757,7 +1921,7 @@ get(sess,uri,fd)
 CODE:
 	RETVAL = 	ne_get(sess,uri,fd);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -1766,7 +1930,7 @@ get_error(sess)
 CODE:
 	RETVAL = 	ne_get_error(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1778,7 +1942,7 @@ get_range(sess,uri,range,fd)
 CODE:
 	RETVAL = 	ne_get_range(sess,uri,range,fd);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -1787,7 +1951,7 @@ get_scheme(sess)
 CODE:
 	RETVAL = 	ne_get_scheme(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -1796,7 +1960,7 @@ get_server_hostport(sess)
 CODE:
 	RETVAL = 	ne_get_server_hostport(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1807,7 +1971,7 @@ getmodtime(sess,uri,modtime)
 CODE:
 	RETVAL = 	ne_getmodtime(sess,uri,modtime);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -1817,7 +1981,7 @@ hook_private(sess,id)
 CODE:
 	RETVAL = 	ne_session_hook_private(sess,id);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1827,7 +1991,7 @@ lock(sess,lock)
 CODE:
 	RETVAL = 	ne_lock(sess,lock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1848,7 +2012,17 @@ lock_discover(sess,uri,result)
                 }
 	RETVAL = 	ne_lock_discover(sess,uri,result?&neon_cb___cb__3:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
+
+
+int
+lock_refresh(sess,lock)
+	ne_session * sess
+	struct ne_lock * lock
+CODE:
+	RETVAL = 	ne_lock_refresh(sess,lock);
+OUTPUT:
+RETVAL
 
 
 ne_lock_session *
@@ -1857,7 +2031,7 @@ lock_register(sess)
 CODE:
 	RETVAL = 	ne_lock_register(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1867,7 +2041,7 @@ mkcol(sess,uri)
 CODE:
 	RETVAL = 	ne_mkcol(sess,uri);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1879,7 +2053,7 @@ move(sess,overwrite,src,dest)
 CODE:
 	RETVAL = 	ne_move(sess,overwrite,src,dest);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1890,7 +2064,8 @@ options(sess,uri,caps)
 CODE:
 	RETVAL = 	ne_options(sess,uri,caps);
 OUTPUT:
-	RETVAL
+RETVAL
+caps
 
 
 int
@@ -1902,7 +2077,7 @@ post(sess,uri,fd,buffer)
 CODE:
 	RETVAL = 	ne_post(sess,uri,fd,buffer);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_propfind_handler *
@@ -1913,7 +2088,7 @@ propfind_create(sess,uri,depth)
 CODE:
 	RETVAL = 	ne_propfind_create(sess,uri,depth);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1935,7 +2110,7 @@ propnames(sess,href,depth,results)
                 }
 	RETVAL = 	ne_propnames(sess,href,depth,results?&neon_cb___cb__4:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1946,7 +2121,7 @@ proppatch(sess,uri,items)
 CODE:
 	RETVAL = 	ne_proppatch(sess,uri,items);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1957,7 +2132,7 @@ proxy(sess,hostname,port)
 CODE:
 	RETVAL = 	ne_session_proxy(sess,hostname,port);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1968,7 +2143,7 @@ put(sess,uri,fd)
 CODE:
 	RETVAL = 	ne_put(sess,uri,fd);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -1980,7 +2155,7 @@ put_if_unmodified(sess,uri,fd,modtime)
 CODE:
 	RETVAL = 	ne_put_if_unmodified(sess,uri,fd,modtime);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2001,7 +2176,7 @@ read_file(sess,uri,reader)
                 }
 	RETVAL = 	ne_read_file(sess,uri,reader?&neon_cb___cb__5:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -2010,7 +2185,7 @@ redirect_location(sess)
 CODE:
 	RETVAL = 	ne_redirect_location(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2046,7 +2221,7 @@ request_create(sess,method,uri)
 CODE:
 	RETVAL = 	ne_request_create(sess,method,uri);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2057,7 +2232,7 @@ server(sess,hostname,port)
 CODE:
 	RETVAL = 	ne_session_server(sess,hostname,port);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2067,7 +2242,7 @@ set_accept_secure_upgrade(sess,acc_upgrade)
 CODE:
 	RETVAL = 	ne_set_accept_secure_upgrade(sess,acc_upgrade);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2137,7 +2312,7 @@ set_request_secure_upgrade(sess,req_upgrade)
 CODE:
 	RETVAL = 	ne_set_request_secure_upgrade(sess,req_upgrade);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2147,7 +2322,7 @@ set_secure(sess,secure)
 CODE:
 	RETVAL = 	ne_set_secure(sess,secure);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2222,7 +2397,7 @@ simple_propfind(sess,uri,depth,props,results)
                 }
 	RETVAL = 	ne_simple_propfind(sess,uri,depth,props,results?&neon_cb___cb__12:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2232,7 +2407,7 @@ simple_request(sess,req)
 CODE:
 	RETVAL = 	ne_simple_request(sess,req);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2242,7 +2417,7 @@ unlock(sess,lock)
 CODE:
 	RETVAL = 	ne_unlock(sess,lock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2251,7 +2426,7 @@ version_pre_http11(sess)
 CODE:
 	RETVAL = 	ne_version_pre_http11(sess);
 OUTPUT:
-	RETVAL
+RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Buffer
 
@@ -2288,7 +2463,7 @@ append(buf,data,len)
 CODE:
 	RETVAL = 	ne_buffer_append(buf,data,len);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2304,7 +2479,7 @@ finish(buf)
 CODE:
 	RETVAL = 	ne_buffer_finish(buf);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2314,7 +2489,7 @@ grow(buf,size)
 CODE:
 	RETVAL = 	ne_buffer_grow(buf,size);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2324,41 +2499,7 @@ zappend(buf,str)
 CODE:
 	RETVAL = 	ne_buffer_zappend(buf,str);
 OUTPUT:
-	RETVAL
-
-MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Lock
-
-
-
-void
-DESTROY(obj)
-	const struct ne_lock * obj
-CODE:
-        hv_delete (pPerl2C, (char *)(SvRV(ST(0))), sizeof (void *), G_DISCARD) ;
-            {
-            SV ** ppArg = hv_fetch (pC2Perl, (char *)(&obj), sizeof(obj), 0) ;
-	    if (ppArg && *ppArg)
-                {
-                *ppArg = NULL ;
-                hv_delete (pC2Perl, (char *)(&obj), sizeof(obj), G_DISCARD) ;
-                }
-            }
-
-
-struct ne_lock *
-copy(lock)
-	struct ne_lock * lock
-CODE:
-	RETVAL = 	ne_lock_copy(lock);
-OUTPUT:
-	RETVAL
-
-
-void
-free(lock)
-	struct ne_lock * lock
-CODE:
-	ne_lock_free(lock);
+RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::LockSession
 
@@ -2394,7 +2535,7 @@ find(sess,uri)
 CODE:
 	RETVAL = 	ne_lock_find(sess,uri);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2414,7 +2555,7 @@ iterate(sess,func)
                 }
 	RETVAL = 	ne_lock_iterate(sess,func?&neon_cb___cb__13:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2450,7 +2591,7 @@ finish_ctx(ctx,resbuf)
 CODE:
 	RETVAL = 	ne_md5_finish_ctx(ctx,resbuf);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2467,7 +2608,7 @@ read_ctx(ctx,resbuf)
 CODE:
 	RETVAL = 	ne_md5_read_ctx(ctx,resbuf);
 OUTPUT:
-	RETVAL
+RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::MultiStatus
 
@@ -2495,7 +2636,7 @@ get_current_propstat(p)
 CODE:
 	RETVAL = 	ne_207_get_current_propstat(p);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -2504,7 +2645,7 @@ get_current_response(p)
 CODE:
 	RETVAL = 	ne_207_get_current_response(p);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2588,7 +2729,7 @@ allprop(handler,result)
                 }
 	RETVAL = 	ne_propfind_allprop(handler,result?&neon_cb___cb__16:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -2597,7 +2738,7 @@ current_private(handler)
 CODE:
 	RETVAL = 	ne_propfind_current_private(handler);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_xml_parser *
@@ -2606,7 +2747,7 @@ get_parser(handler)
 CODE:
 	RETVAL = 	ne_propfind_get_parser(handler);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_request *
@@ -2615,7 +2756,7 @@ get_request(handler)
 CODE:
 	RETVAL = 	ne_propfind_get_request(handler);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2636,7 +2777,7 @@ named(handler,prop,result)
                 }
 	RETVAL = 	ne_propfind_named(handler,prop,result?&neon_cb___cb__17:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2683,7 +2824,7 @@ iterate(set,iterator)
                 }
 	RETVAL = 	ne_propset_iterate(set,iterator?&neon_cb___cb__18:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -2693,7 +2834,7 @@ lang(set,pname)
 CODE:
 	RETVAL = 	ne_propset_lang(set,pname);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -2702,7 +2843,7 @@ private(set)
 CODE:
 	RETVAL = 	ne_propset_private(set);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const ne_status *
@@ -2712,7 +2853,7 @@ status(set,propname)
 CODE:
 	RETVAL = 	ne_propset_status(set,propname);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -2722,7 +2863,7 @@ value(set,propname)
 CODE:
 	RETVAL = 	ne_propset_value(set,propname);
 OUTPUT:
-	RETVAL
+RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Request
 
@@ -2829,7 +2970,7 @@ begin_request(req)
 CODE:
 	RETVAL = 	ne_begin_request(req);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2838,7 +2979,7 @@ dispatch(req)
 CODE:
 	RETVAL = 	ne_request_dispatch(req);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -2847,7 +2988,7 @@ end_request(req)
 CODE:
 	RETVAL = 	ne_end_request(req);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const ne_status *
@@ -2856,7 +2997,7 @@ get_status(req)
 CODE:
 	RETVAL = 	ne_get_status(req);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -2866,7 +3007,7 @@ hook_private(req,id)
 CODE:
 	RETVAL = 	ne_request_hook_private(req,id);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2894,7 +3035,7 @@ read_response_block(req,buffer,buflen)
 CODE:
 	RETVAL = 	ne_read_response_block(req,buffer,buflen);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2913,7 +3054,7 @@ set_request_body_fd(req,fd)
 CODE:
 	RETVAL = 	ne_set_request_body_fd(req,fd);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -2983,7 +3124,7 @@ set_client_cert(ctx,certfile,keyfile)
 CODE:
 	RETVAL = 	sock_set_client_cert(ctx,certfile,keyfile);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3029,7 +3170,7 @@ block(sock,timeout)
 CODE:
 	RETVAL = 	sock_block(sock,timeout);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3047,7 +3188,7 @@ close(sock)
 CODE:
 	RETVAL = 	sock_close(sock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3058,7 +3199,7 @@ fullread(sock,buffer,buflen)
 CODE:
 	RETVAL = 	sock_fullread(sock,buffer,buflen);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3069,7 +3210,7 @@ fullwrite(sock,data,length)
 CODE:
 	RETVAL = 	sock_fullwrite(sock,data,length);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -3078,7 +3219,7 @@ get_error(sock)
 CODE:
 	RETVAL = 	sock_get_error(sock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3087,7 +3228,7 @@ get_fd(sock)
 CODE:
 	RETVAL = 	sock_get_fd(sock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -3096,7 +3237,7 @@ get_version(sock)
 CODE:
 	RETVAL = 	sock_get_version(sock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3106,7 +3247,7 @@ make_secure(sock,ctx)
 CODE:
 	RETVAL = 	sock_make_secure(sock,ctx);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3117,7 +3258,7 @@ peek(sock,buffer,count)
 CODE:
 	RETVAL = 	sock_peek(sock,buffer,count);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3128,7 +3269,7 @@ read(sock,buffer,count)
 CODE:
 	RETVAL = 	sock_read(sock,buffer,count);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3149,7 +3290,7 @@ readfile_blocked(sock,length,reader)
                 }
 	RETVAL = 	sock_readfile_blocked(sock,length,reader?&neon_cb___cb__25:NULL,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3160,7 +3301,7 @@ readline(sock,line,len)
 CODE:
 	RETVAL = 	sock_readline(sock,line,len);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3188,7 +3329,7 @@ send_string(sock,string)
 CODE:
 	RETVAL = 	sock_send_string(sock,string);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3198,7 +3339,7 @@ sendline(sock,line)
 CODE:
 	RETVAL = 	sock_sendline(sock,line);
 OUTPUT:
-	RETVAL
+RETVAL
 
 MODULE = HTTP::Webdav         PACKAGE = HTTP::Webdav::Util
 
@@ -3211,7 +3352,7 @@ accept_207(userdata,req,status)
 CODE:
 	RETVAL = 	ne_accept_207(userdata,req,status);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3222,7 +3363,7 @@ accept_2xx(userdata,req,st)
 CODE:
 	RETVAL = 	ne_accept_2xx(userdata,req,st);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3233,7 +3374,7 @@ accept_always(userdata,req,st)
 CODE:
 	RETVAL = 	ne_accept_always(userdata,req,st);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 time_t
@@ -3242,7 +3383,7 @@ asctime_parse(date)
 CODE:
 	RETVAL = 	ne_asctime_parse(date);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_buffer *
@@ -3250,7 +3391,7 @@ buffer_create()
 CODE:
 	RETVAL = 	ne_buffer_create();
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_buffer *
@@ -3259,7 +3400,7 @@ buffer_create_sized(size)
 CODE:
 	RETVAL = 	ne_buffer_create_sized(size);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -3268,7 +3409,7 @@ calloc(len)
 CODE:
 	RETVAL = 	ne_calloc(len);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3309,7 +3450,32 @@ httpdate_parse(date)
 CODE:
 	RETVAL = 	ne_httpdate_parse(date);
 OUTPUT:
-	RETVAL
+RETVAL
+
+
+time_t
+iso8601_parse(date)
+	char * date
+CODE:
+	RETVAL = 	ne_iso8601_parse(date);
+OUTPUT:
+RETVAL
+
+
+struct ne_lock *
+lock_copy(lock)
+	struct ne_lock * lock
+CODE:
+	RETVAL = 	ne_lock_copy(lock);
+OUTPUT:
+RETVAL
+
+
+void
+lock_free(lock)
+	struct ne_lock * lock
+CODE:
+	ne_lock_free(lock);
 
 
 void *
@@ -3320,7 +3486,7 @@ md5_buffer(buffer,len,resblock)
 CODE:
 	RETVAL = 	ne_md5_buffer(buffer,len,resblock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3348,7 +3514,7 @@ md5_stream(stream,resblock)
 CODE:
 	RETVAL = 	ne_md5_stream(stream,resblock);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3362,7 +3528,7 @@ parse_statusline(status_line,s)
 CODE:
 	RETVAL = 	ne_parse_statusline(status_line,s);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void *
@@ -3372,7 +3538,7 @@ realloc(ptr,len)
 CODE:
 	RETVAL = 	ne_realloc(ptr,len);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 time_t
@@ -3381,7 +3547,7 @@ rfc1036_parse(date)
 CODE:
 	RETVAL = 	ne_rfc1036_parse(date);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 char *
@@ -3390,7 +3556,7 @@ rfc1123_date(anytime)
 CODE:
 	RETVAL = 	ne_rfc1123_date(anytime);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 time_t
@@ -3399,7 +3565,7 @@ rfc1123_parse(date)
 CODE:
 	RETVAL = 	ne_rfc1123_parse(date);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_session *
@@ -3407,7 +3573,7 @@ session_create()
 CODE:
 	RETVAL = 	ne_session_create();
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 char *
@@ -3417,7 +3583,7 @@ shave(str,whitespace)
 CODE:
 	RETVAL = 	ne_shave(str,whitespace);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 nsocket *
@@ -3461,7 +3627,7 @@ strdup(s)
 CODE:
 	RETVAL = 	ne_strdup(s);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 char *
@@ -3471,7 +3637,15 @@ strndup(s,n)
 CODE:
 	RETVAL = 	ne_strndup(s,n);
 OUTPUT:
-	RETVAL
+RETVAL
+
+
+int
+supports_ssl()
+CODE:
+	RETVAL = 	ne_supports_ssl();
+OUTPUT:
+RETVAL
 
 
 char *
@@ -3536,7 +3710,7 @@ utf8_decode(str)
 CODE:
 	RETVAL = 	ne_utf8_decode(str);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 char *
@@ -3545,7 +3719,7 @@ utf8_encode(str)
 CODE:
 	RETVAL = 	ne_utf8_encode(str);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 int
@@ -3555,7 +3729,7 @@ version_minimum(major,minor)
 CODE:
 	RETVAL = 	ne_version_minimum(major,minor);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -3563,7 +3737,7 @@ version_string()
 CODE:
 	RETVAL = 	ne_version_string();
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_xml_parser *
@@ -3571,7 +3745,7 @@ xml_create()
 CODE:
 	RETVAL = 	ne_xml_create();
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3608,7 +3782,7 @@ currentline(p)
 CODE:
 	RETVAL = 	ne_xml_currentline(p);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 const char *
@@ -3617,7 +3791,7 @@ get_error(p)
 CODE:
 	RETVAL = 	ne_xml_get_error(p);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 ne_207_parser *
@@ -3630,7 +3804,7 @@ ne_207_create(parser)
         CODE:
 	RETVAL = 	ne_207_create(parser,pObject);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 void
@@ -3646,7 +3820,7 @@ void
 push_handler(p,elements,validate_cb,startelm_cb,endelm_cb)
 	ne_xml_parser * p
 	struct ne_xml_elm * elements
-	ne_xml_validate_cb validate_cb
+	CV * validate_cb
 	CV * startelm_cb
 	CV * endelm_cb
 
@@ -3655,25 +3829,31 @@ push_handler(p,elements,validate_cb,startelm_cb,endelm_cb)
             HV * pObjHV  = (HV *)SvRV(pObject) ;
         CODE:
 
+            if (validate_cb)
+                {
+                SvREFCNT_inc ((SV *)validate_cb) ;
+                hv_store (pObjHV, "__cb__27", 8, (SV *)validate_cb, 0) ; 
+                }
+
             if (startelm_cb)
                 {
                 SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__27", 8, (SV *)startelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__28", 8, (SV *)startelm_cb, 0) ; 
                 }
 
             if (endelm_cb)
                 {
                 SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__28", 8, (SV *)endelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__29", 8, (SV *)endelm_cb, 0) ; 
                 }
-	ne_xml_push_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__27:NULL,endelm_cb?&neon_cb___cb__28:NULL,pObject);
+	ne_xml_push_handler(p,elements,validate_cb?&neon_cb___cb__27:NULL,startelm_cb?&neon_cb___cb__28:NULL,endelm_cb?&neon_cb___cb__29:NULL,pObject);
 
 
 void
 push_mixed_handler(p,elements,validate_cb,startelm_cb,cdata_cb,endelm_cb)
 	ne_xml_parser * p
 	struct ne_xml_elm * elements
-	ne_xml_validate_cb validate_cb
+	CV * validate_cb
 	CV * startelm_cb
 	CV * cdata_cb
 	CV * endelm_cb
@@ -3683,24 +3863,30 @@ push_mixed_handler(p,elements,validate_cb,startelm_cb,cdata_cb,endelm_cb)
             HV * pObjHV  = (HV *)SvRV(pObject) ;
         CODE:
 
+            if (validate_cb)
+                {
+                SvREFCNT_inc ((SV *)validate_cb) ;
+                hv_store (pObjHV, "__cb__30", 8, (SV *)validate_cb, 0) ; 
+                }
+
             if (startelm_cb)
                 {
                 SvREFCNT_inc ((SV *)startelm_cb) ;
-                hv_store (pObjHV, "__cb__29", 8, (SV *)startelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__31", 8, (SV *)startelm_cb, 0) ; 
                 }
 
             if (cdata_cb)
                 {
                 SvREFCNT_inc ((SV *)cdata_cb) ;
-                hv_store (pObjHV, "__cb__30", 8, (SV *)cdata_cb, 0) ; 
+                hv_store (pObjHV, "__cb__32", 8, (SV *)cdata_cb, 0) ; 
                 }
 
             if (endelm_cb)
                 {
                 SvREFCNT_inc ((SV *)endelm_cb) ;
-                hv_store (pObjHV, "__cb__31", 8, (SV *)endelm_cb, 0) ; 
+                hv_store (pObjHV, "__cb__33", 8, (SV *)endelm_cb, 0) ; 
                 }
-	ne_xml_push_mixed_handler(p,elements,validate_cb,startelm_cb?&neon_cb___cb__29:NULL,cdata_cb?&neon_cb___cb__30:NULL,endelm_cb?&neon_cb___cb__31:NULL,pObject);
+	ne_xml_push_mixed_handler(p,elements,validate_cb?&neon_cb___cb__30:NULL,startelm_cb?&neon_cb___cb__31:NULL,cdata_cb?&neon_cb___cb__32:NULL,endelm_cb?&neon_cb___cb__33:NULL,pObject);
 
 
 void
@@ -3717,7 +3903,7 @@ valid(p)
 CODE:
 	RETVAL = 	ne_xml_valid(p);
 OUTPUT:
-	RETVAL
+RETVAL
 
 
 BOOT:

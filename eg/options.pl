@@ -12,43 +12,25 @@
 # WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
 # MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: Webdav.pm,v 1.15 2001/08/10 12:46:34 richter Exp $
+# $Id: options.pl,v 1.1 2001/08/10 12:46:35 richter Exp $
 #
 ############################################################################
 
+#
+# This example for a simple GET
+#
 
-package HTTP::Webdav ;
+use HTTP::Webdav ;
 
-use strict;
-use vars qw($VERSION @ISA $initdone);
+$sess = HTTP::Webdav -> new ;
 
+$sess -> server ("www.i.ecos.de", 80) ;
 
-require Exporter;
+$sess -> options ("/dav", \%result) ;
 
-$VERSION = "0.1.16-0.16.1";
-
-require DynaLoader;
-
-@ISA = qw(DynaLoader);
-
-bootstrap HTTP::Webdav $VERSION;
-
-sub new 
+print "Options returned:\n" ;
+while (($k, $v) = each %result)
     {
-    my $class = shift;
-    my %options = @_;
-
-    if (!$initdone)
-        {
-        HTTP::Webdav::Util::sock_init () ;
-        $initdone++ ;
-        }
-
-
-    my $sess = HTTP::Webdav::Util::session_create () ;
-
-    return $sess;
+    print "$k = $v\n" ;
     }
-
-1;
 

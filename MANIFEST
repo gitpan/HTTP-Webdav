@@ -12,5 +12,8 @@ eg/propfind.pl
 eg/proppatch.pl
 eg/showheader.pl
 eg/copy.pl
+eg/lock_and_copy.pl
+eg/lock.pl
+eg/options.pl
 Webdav/Constants.pm
 Changes

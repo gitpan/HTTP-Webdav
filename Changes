@@ -1,3 +1,14 @@
+0.1.16
+
+    - Works now with neon 0.16.1
+    - ne_xml_validate_cb callback is now available in Perl
+    - lock_discover callback now gets the lock data structure as hash
+    - added eg/lock.pl example for locking and lock_discover
+
+0.1.15
+
+    - Make return parameter from options methods available
+    - Turn ne_lock from object to a hash, so locks are usable
 
 0.1.14
 

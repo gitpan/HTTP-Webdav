@@ -268,16 +268,12 @@ ne_session *
 
 =back
 
-=head2 int = $session -> copy (overwrite,src,dest)
+=head2 int = $session -> copy (overwrite,depth,src,dest)
 
-Basic WebDAV methods:
-ne_copy:  copy resoure from src to dest
-ne_move:  move resource from src to dest
--> if overwrite is non-zero, the destination resource
-will be overwritten if it exists.
-ne_delete: delete resource at uri
-ne_mkcol: create a collection at uri (uri MUST have a trailing slash).
-
+Copy resource from src to dest URIs. If src identifies a collection
+resource, depth may be NE_DEPTH_ZERO to request that the collection
+and its properties are to be copied, or NE_DEPTH_INFINITE to
+request that the collection and its contents are to be copied.  
 
 =over 4
 
@@ -292,6 +288,11 @@ ne_session *
 
 
 =item overwrite
+
+<integer>
+
+
+=item depth
 
 <integer>
 
@@ -378,6 +379,7 @@ void *
 
 =head2 int = $session -> delete (uri)
 
+Delete resource at uri. 
 
 =over 4
 
@@ -428,7 +430,7 @@ ne_session *
 
 =head2 int = $session -> get (uri,fd)
 
-GET resource at uri, writing response body into f 
+Return resource at uri, writing response body to f 
 
 =over 4
 
@@ -640,9 +642,13 @@ ne_session *
 
 =back
 
-=head2 int = $session -> lock ($lock)
+=head2 int = $session -> lock (lock)
 
-Issue a LOCK request for the given lock. 
+Issue a LOCK request for the given lock.
+Requires that the uri, depth, type, scope, and timeout members
+of 'lock' are filled in. Optionally also the owner.
+On successful return, lock->token will contain the lock token. 
+
 
 =over 4
 
@@ -656,9 +662,16 @@ ne_session *
 
 
 
-=item $lock
+=item lock
 
 struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
 
 
 
@@ -694,7 +707,7 @@ ne_session *
 
 =item Callback function: result
 
-result (userdata,$lock,uri,status)
+result (userdata,lock,uri,status)
 
 Callback for lock discovery.  If 'lock' is NULL, 
 something went wrong retrieving lockdiscover for the resource,
@@ -723,6 +736,41 @@ const ne_status *
 
 
 =back
+
+
+
+=back
+
+
+=back
+
+=head2 int = $session -> lock_refresh (lock)
+
+Refresh a lock. Updates lock->timeout appropriately. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item $session
+
+ne_session *
+
+
+
+=item lock
+
+struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
+
 
 
 
@@ -760,6 +808,7 @@ ne_session *
 
 =head2 int = $session -> mkcol (uri)
 
+Create a collection at uri, which MUST have a trailing slash. 
 
 =over 4
 
@@ -787,6 +836,7 @@ ne_session *
 
 =head2 int = $session -> move (overwrite,src,dest)
 
+Move resource from src to dest URI. 
 
 =over 4
 
@@ -853,7 +903,7 @@ ne_server_capabilities *
 
 
 caps = {
- => , dav_class1 => unsigned int, dav_class2 => unsigned int, dav_executable => unsigned int, };
+dav_class1 => unsigned int, dav_class2 => unsigned int, dav_executable => unsigned int, };
 
 
 
@@ -1072,7 +1122,7 @@ ne_session *
 
 =head2 int = $session -> put (uri,fd)
 
-PUT resource at uri, reading request body from f 
+Replace resource at uri, reading body from f 
 
 =over 4
 
@@ -2008,7 +2058,7 @@ ne_request *
 
 =back
 
-=head2 int = $session -> unlock ($lock)
+=head2 int = $session -> unlock (lock)
 
 Issue an UNLOCK request for the given lock 
 
@@ -2024,9 +2074,16 @@ ne_session *
 
 
 
-=item $lock
+=item lock
 
 struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
 
 
 
@@ -2257,57 +2314,9 @@ ne_buffer *
 
 
 
-=head1 Methods of HTTP::Webdav::Lock
-
-=head2 $lock = $lock -> copy ()
-
-Deep-copy a lock structure. 
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $lock
-
-const struct ne_lock *
-
-
-
-
-=back
-
-
-=back
-
-=head2 $lock -> free ()
-
-Free a lock structure 
-
-=over 4
-
-=item Arguments
-
-=over 4
-
-=item $lock
-
-struct ne_lock *
-
-
-
-
-=back
-
-
-=back
-
-
-
 =head1 Methods of HTTP::Webdav::LockSession
 
-=head2 $locksession -> add ($lock)
+=head2 $locksession -> add (lock)
 
 Add a lock to the given session. The lock will subsequently be
 submitted as required in an If: header with any requests created
@@ -2327,19 +2336,26 @@ ne_lock_session *
 
 
 
-=item $lock
+=item lock
 
 struct ne_lock *
 
 
 
 
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
+
+
+
+
 =back
 
 
 =back
 
-=head2 $lock = $locksession -> find (uri)
+=head2 struct ne_lock * = $locksession -> find (uri)
 
 Find a lock in the session with given URI 
 
@@ -2390,7 +2406,7 @@ ne_lock_session *
 
 =item Callback function: func
 
-func ($lock,userdata)
+func (lock,userdata)
 
 
 
@@ -2416,7 +2432,7 @@ void *
 
 =back
 
-=head2 $locksession -> remove ($lock)
+=head2 $locksession -> remove (lock)
 
 Remove lock, which must have been previously added to the
 session using 'ne_lock_add' above. 
@@ -2433,9 +2449,16 @@ ne_lock_session *
 
 
 
-=item $lock
+=item lock
 
 struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
 
 
 
@@ -5041,6 +5064,88 @@ Parse an HTTP-date as per RFC2616
 
 =back
 
+=head2 time_t = HTTP::Webdav::Util::iso8601_parse (date)
+
+Returns time from date/time using the subset of the ISO8601 format
+referenced in RFC2518 (e.g as used in the creationdate property in
+the DAV: namespace). 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item date
+
+<string>
+
+
+
+
+=back
+
+
+=back
+
+=head2 struct ne_lock * = HTTP::Webdav::Util::lock_copy (lock)
+
+Deep-copy a lock structure. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item lock
+
+const struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
+
+
+
+
+=back
+
+
+=back
+
+=head2 HTTP::Webdav::Util::lock_free (lock)
+
+Free a lock structure 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+=item lock
+
+struct ne_lock *
+
+
+
+
+lock = {
+uri => <string>, depth => <integer>, type => <integer>, scope => <integer>, token => <string>, owner => <string>, timeout => long, prev => void *, next => void *, };
+
+
+
+
+
+=back
+
+
+=back
+
 =head2 void * = HTTP::Webdav::Util::md5_buffer (buffer,len,resblock)
 
 
@@ -5580,6 +5685,23 @@ size_t
 
 =back
 
+=head2 int = HTTP::Webdav::Util::supports_ssl ()
+
+Returns non-zero if neon has support for SSL. 
+
+=over 4
+
+=item Arguments
+
+=over 4
+
+
+
+=back
+
+
+=back
+
 =head2 char * = HTTP::Webdav::Util::uri_absolute (uri,scheme,hostport)
 
 Returns an absolute URI from a possibly-relative 'uri', using
@@ -5951,7 +6073,7 @@ Initialise the parser
 =head2 HTTP::Webdav::Util::xml_parse_v (userdata,block,len)
 
 As above, casting (ne_xml_parser *)userdata internally.
-(This function can be passed to http_add_response_body_reader) 
+(This function can be passed to ne_add_response_body_reader) 
 
 =over 4
 
@@ -6143,12 +6265,33 @@ ne_xml_parser *
 const struct ne_xml_elm *
 
 
-=item validate_cb
 
-ne_xml_validate_cb
+
+=item Callback function: validate_cb
+
+int = validate_cb (userdata,parent,child)
 
 Validate a new child element. 
 
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item parent
+
+ne_xml_elmid
+
+=item child
+
+ne_xml_elmid
+
+
+
+=back
 
 
 
@@ -6233,12 +6376,33 @@ ne_xml_parser *
 const struct ne_xml_elm *
 
 
-=item validate_cb
 
-ne_xml_validate_cb
+
+=item Callback function: validate_cb
+
+int = validate_cb (userdata,parent,child)
 
 Validate a new child element. 
 
+
+
+=over 4
+
+=item userdata
+
+void *
+
+=item parent
+
+ne_xml_elmid
+
+=item child
+
+ne_xml_elmid
+
+
+
+=back
 
 
 

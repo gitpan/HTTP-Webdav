@@ -2,22 +2,28 @@ TYPEMAP
 ne_status * ne_status__
 const unsigned char T_PV
 ne_content_range * ne_content_range__
+const ne_server_capabilities * ne_server_capabilities__
 CV * T_CVREF2
 const ne_proppatch_operation * ne_proppatch_operation__
 const ne_propname * ne_propname__
 const ne_status * ne_status__
+ne_lock_struct * ne_lock_struct__
+struct ne_lock * struct_ne_lock__
 const ne_content_range * ne_content_range__
 nssl_certificate * nssl_certificate__
 const dav_proppatch_operation * 
 const dav_propname * 
 off_t T_IV
 const char * T_PV
+const ne_lock_struct * ne_lock_struct__
+const struct ne_lock * struct_ne_lock__
 char ** T_mallocstr
 const nssl_certificate * nssl_certificate__
 enum T_ENUM
 ne_content_type * ne_content_type__
 xxxxx T_PTRNULL
 unsigned short int T_IV
+ne_server_capabilities * ne_server_capabilities__
 ne_proppatch_operation * ne_proppatch_operation__
 ne_propname * ne_propname__
 const ne_content_type * ne_content_type__
@@ -48,11 +54,8 @@ ne_request_hooks * T_PTRNULL
 const ne_request_hooks * T_PTRNULL
 ne_props_create_complex T_PTRNULL
 const ne_props_create_complex T_PTRNULL
-ne_xml_validate_cb T_PTRNULL
-const ne_xml_validate_cb T_PTRNULL
+ne_xml_validate_cb T_CVREF2
 ne_redirect_confirm T_CVREF2
-struct ne_lock * struct_ne_lock__
-const struct ne_lock * struct_ne_lock__
 void T_PTRNULL
 const void T_PTRNULL
 ne_207_start_propstat T_PTRNULL
@@ -62,8 +65,6 @@ const struct ne_md5_ctx * struct_ne_md__ctx__
 ne_lock_walkfunc T_CVREF2
 ne_header_handler T_CVREF2
 ne_lock_result T_CVREF2
-ne_server_capabilities * T_PTRNULL
-const ne_server_capabilities * T_PTRNULL
 ne_207_parser * ne_____parser__
 const ne_207_parser * ne_____parser__
 nsocket * nsocket__
@@ -212,13 +213,31 @@ ne_prop_result_set__
 struct_ne_lock__
 
         {
-        SV ** ppObj = NULL ;
-        ppObj = hv_fetch (pPerl2C, (char *)(SvRV($arg)), sizeof (void *), 0) ;
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
 
-        if (!ppObj || !*ppObj)
-            croak (\"\$var is not of type HTTP::Webdav::Lock\") ;
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->uri = (char *)SvPV(__fetchmember(_pHV_,\"uri\"),PL_na)	;
+	(($type)$var)->depth = (int)SvIV(__fetchmember(_pHV_,\"depth\"))	;
+	(($type)$var)->type = (int)SvIV(__fetchmember(_pHV_,\"type\"))	;
+	(($type)$var)->scope = (int)SvIV(__fetchmember(_pHV_,\"scope\"))	;
+	(($type)$var)->token = (char *)SvPV(__fetchmember(_pHV_,\"token\"),PL_na)	;
+	(($type)$var)->owner = (char *)SvPV(__fetchmember(_pHV_,\"owner\"),PL_na)	;
+	(($type)$var)->timeout = (long)SvIV(__fetchmember(_pHV_,\"timeout\"))	;
+	(($type)$var)->prev = (void *)SvIV(__fetchmember(_pHV_,\"prev\"))	;
+	(($type)$var)->next = (void *)SvIV(__fetchmember(_pHV_,\"next\"))	;
 
-        $var = ($type)SvIV (*ppObj) ;
+            }
+        else
+            {
+            $var = NULL ;
+            }
         }
 
 nssl_certificate__
@@ -239,6 +258,30 @@ nssl_certificate__
 	(($type)$var)->valid_from = (char *)SvPV(__fetchmember(_pHV_,\"valid_from\"),PL_na)	;
 	(($type)$var)->valid_till = (char *)SvPV(__fetchmember(_pHV_,\"valid_till\"),PL_na)	;
 	(($type)$var)->fingerprint = (char *)SvPV(__fetchmember(_pHV_,\"fingerprint\"),PL_na)	;
+
+            }
+        else
+            {
+            $var = NULL ;
+            }
+        }
+
+ne_server_capabilities__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->dav_class1 = (unsigned int)SvUV(__fetchmember(_pHV_,\"dav_class1\"))	;
+	(($type)$var)->dav_class2 = (unsigned int)SvUV(__fetchmember(_pHV_,\"dav_class2\"))	;
+	(($type)$var)->dav_executable = (unsigned int)SvUV(__fetchmember(_pHV_,\"dav_executable\"))	;
 
             }
         else
@@ -404,6 +447,36 @@ ne_request__
         $var = ($type)SvIV (*ppObj) ;
         }
 
+ne_lock_struct__
+
+        {
+        HV * _pHV_ ;
+        if (SvOK($arg))
+            {
+            SV * p ;
+            if (!SvROK ($arg) || SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	        croak(\"$var must be a hash reference\") ;
+
+            p = newSVpv (\"\", sizeof (\*$var)) ;
+            sv_2mortal (p) ;
+            $var = ($type)SvPVX (p) ;
+	(($type)$var)->uri = (char *)SvPV(__fetchmember(_pHV_,\"uri\"),PL_na)	;
+	(($type)$var)->depth = (int)SvIV(__fetchmember(_pHV_,\"depth\"))	;
+	(($type)$var)->type = (int)SvIV(__fetchmember(_pHV_,\"type\"))	;
+	(($type)$var)->scope = (int)SvIV(__fetchmember(_pHV_,\"scope\"))	;
+	(($type)$var)->token = (char *)SvPV(__fetchmember(_pHV_,\"token\"),PL_na)	;
+	(($type)$var)->owner = (char *)SvPV(__fetchmember(_pHV_,\"owner\"),PL_na)	;
+	(($type)$var)->timeout = (long)SvIV(__fetchmember(_pHV_,\"timeout\"))	;
+	(($type)$var)->prev = (void *)SvIV(__fetchmember(_pHV_,\"prev\"))	;
+	(($type)$var)->next = (void *)SvIV(__fetchmember(_pHV_,\"next\"))	;
+
+            }
+        else
+            {
+            $var = NULL ;
+            }
+        }
+
 nssl_context__
 
         {
@@ -544,6 +617,8 @@ ne_content_range__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 	sv_setiv(__fetchmember(_pHV_,\"start\"), (IV)(($type)$var)->start);
 	;
 	sv_setiv(__fetchmember(_pHV_,\"end\"), (IV)(($type)$var)->end);
@@ -551,6 +626,7 @@ ne_content_range__
 	sv_setiv(__fetchmember(_pHV_,\"total\"), (IV)(($type)$var)->total);
 	;
 
+            }
         }
 
 T_CVREF2
@@ -572,11 +648,14 @@ ne_propname__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 	sv_setpv((SV*)__fetchmember(_pHV_,\"nspace\"), (($type)$var)->nspace);
 	;
 	sv_setpv((SV*)__fetchmember(_pHV_,\"name\"), (($type)$var)->name);
 	;
 
+            }
         }
 
 ne_lock_session__
@@ -614,17 +693,40 @@ ne_prop_result_set__
 struct_ne_lock__
 
         {
-        SV ** ppArg ;
-        ppArg = hv_fetch (pC2Perl, (char *)(\&$var), sizeof($var), 1) ;
-        if (!SvOK(*ppArg))
+        HV * _pHV_ ;
+        if (!SvOK($arg))
             {
-            SV * pObj ;
-            *ppArg = newRV_noinc ((SV *)newHV()) ;
-            sv_2mortal(*ppArg) ;
-	    sv_bless (*ppArg, gv_stashpv (\"HTTP::Webdav::Lock\", 0)) ;
-            hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
+            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal ($arg) ;
             }
-        $arg = *ppArg ;
+        else if (!SvROK ($arg))
+            {
+            croak (\"$var must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
+	sv_setpv((SV*)__fetchmember(_pHV_,\"uri\"), (($type)$var)->uri);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"depth\"), (IV)(($type)$var)->depth);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)(($type)$var)->type);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"scope\"), (IV)(($type)$var)->scope);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"token\"), (($type)$var)->token);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"owner\"), (($type)$var)->owner);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"timeout\"), (IV)(($type)$var)->timeout);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"prev\"), (IV)(($type)$var)->prev);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"next\"), (IV)(($type)$var)->next);
+	;
+
+            }
         }
 
 nssl_certificate__
@@ -642,6 +744,8 @@ nssl_certificate__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 	sv_setpv((SV*)__fetchmember(_pHV_,\"owner\"), (($type)$var)->owner);
 	;
 	sv_setpv((SV*)__fetchmember(_pHV_,\"issuer\"), (($type)$var)->issuer);
@@ -653,6 +757,34 @@ nssl_certificate__
 	sv_setpv((SV*)__fetchmember(_pHV_,\"fingerprint\"), (($type)$var)->fingerprint);
 	;
 
+            }
+        }
+
+ne_server_capabilities__
+
+        {
+        HV * _pHV_ ;
+        if (!SvOK($arg))
+            {
+            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal ($arg) ;
+            }
+        else if (!SvROK ($arg))
+            {
+            croak (\"$var must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
+	sv_setuv(__fetchmember(_pHV_,\"dav_class1\"), (UV)(($type)$var)->dav_class1);
+	;
+	sv_setuv(__fetchmember(_pHV_,\"dav_class2\"), (UV)(($type)$var)->dav_class2);
+	;
+	sv_setuv(__fetchmember(_pHV_,\"dav_executable\"), (UV)(($type)$var)->dav_executable);
+	;
+
+            }
         }
 
 ne_proppatch_operation__
@@ -672,6 +804,8 @@ ne_proppatch_operation__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 
         {
         HV * _pHV_x_ ;
@@ -688,17 +822,21 @@ ne_proppatch_operation__
             }
         else if (SvTYPE(_pHV_x_ = (HV *)SvRV(__fetchmember(_pHV_,\"name\"))) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_x_, SVt_PVHV) ;
+        if ((($type)$var)->name)
+            {
 	sv_setpv((SV*)__fetchmember(_pHV_x_,\"nspace\"), ((ne_propname *)(($type)$var)->name)->nspace);
 	;
 	sv_setpv((SV*)__fetchmember(_pHV_x_,\"name\"), ((ne_propname *)(($type)$var)->name)->name);
 	;
 
+            }
         }
 	;
 	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)(($type)$var)->type);	;
 	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), (($type)$var)->value);
 	;
 
+            }
         }
 
 ne_status__
@@ -716,6 +854,8 @@ ne_status__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 	sv_setiv(__fetchmember(_pHV_,\"major_version\"), (IV)(($type)$var)->major_version);
 	;
 	sv_setiv(__fetchmember(_pHV_,\"minor_version\"), (IV)(($type)$var)->minor_version);
@@ -727,6 +867,7 @@ ne_status__
 	sv_setpv((SV*)__fetchmember(_pHV_,\"reason_phrase\"), (($type)$var)->reason_phrase);
 	;
 
+            }
         }
 
 ne_____parser__
@@ -777,6 +918,45 @@ ne_request__
             hv_store (pPerl2C, (char *)(SvRV (*ppArg)), sizeof (void *), newSViv ((IV)$var), 0) ;
             }
         $arg = *ppArg ;
+        }
+
+ne_lock_struct__
+
+        {
+        HV * _pHV_ ;
+        if (!SvOK($arg))
+            {
+            $arg = newRV_noinc((SV *)(_pHV_ = newHV())) ;
+            sv_2mortal ($arg) ;
+            }
+        else if (!SvROK ($arg))
+            {
+            croak (\"$var must be a reference\") ;
+            }
+        else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
+	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
+	sv_setpv((SV*)__fetchmember(_pHV_,\"uri\"), (($type)$var)->uri);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"depth\"), (IV)(($type)$var)->depth);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"type\"), (IV)(($type)$var)->type);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"scope\"), (IV)(($type)$var)->scope);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"token\"), (($type)$var)->token);
+	;
+	sv_setpv((SV*)__fetchmember(_pHV_,\"owner\"), (($type)$var)->owner);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"timeout\"), (IV)(($type)$var)->timeout);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"prev\"), (IV)(($type)$var)->prev);
+	;
+	sv_setiv(__fetchmember(_pHV_,\"next\"), (IV)(($type)$var)->next);
+	;
+
+            }
         }
 
 nssl_context__
@@ -844,6 +1024,8 @@ ne_content_type__
             }
         else if (SvTYPE(_pHV_ = (HV *)SvRV($arg)) != SVt_PVHV)
 	    SvUPGRADE ((SV *)_pHV_, SVt_PVHV) ;
+        if ($var)
+            {
 	sv_setpv((SV*)__fetchmember(_pHV_,\"type\"), (($type)$var)->type);
 	;
 	sv_setpv((SV*)__fetchmember(_pHV_,\"subtype\"), (($type)$var)->subtype);
@@ -853,6 +1035,7 @@ ne_content_type__
 	sv_setpv((SV*)__fetchmember(_pHV_,\"value\"), (($type)$var)->value);
 	;
 
+            }
         }
 
 ne_xml_parser__

@@ -42,7 +42,7 @@ $sess = HTTP::Webdav -> new ;
 $sess -> server ("www.gr.ecos.de", 8765) ;
 $sess -> set_server_auth (\&auth) ;
 
-$sess -> copy (1, "/dav/foo.htm", "/dav/bar.htm") ;
+$sess -> copy (1, NE_DEPTH_ONE, "/dav/foo.htm", "/dav/bar.htm") ;
 
 print "Status: ", $sess -> get_error , "\n" ;
 
